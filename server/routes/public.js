@@ -138,7 +138,7 @@ router.post('/contact', async (req, res) => {
         console.log('Email notification sent to', notifyEmail);
       }
     } catch (emailErr) {
-      console.log('Email not sent (SMTP not configured):', (emailErr as Error).message);
+      console.log('Email not sent (SMTP not configured):', emailErr.message);
     }
 
     res.json({ success: true, message: '感谢您的来信，我们会尽快与您取得联系。' });
