@@ -14,6 +14,7 @@ export interface CollectionItem {
   cover: MediaAsset;
   year: number;
   tags: string[];
+  content?: string;
 }
 
 export interface JournalPost {

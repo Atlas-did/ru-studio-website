@@ -12,13 +12,14 @@ interface CollectionItem {
   cover_height: number;
   year: number;
   tags: string[];
+  content: string;
   sort_order: number;
 }
 
 const emptyItem: CollectionItem = {
   slug: '', title: '', subtitle: '', category: '摄影',
   cover_url: '', cover_alt: '', cover_width: 800, cover_height: 1067,
-  year: new Date().getFullYear(), tags: [], sort_order: 0,
+  year: new Date().getFullYear(), tags: [], content: '', sort_order: 0,
 };
 
 const categories = ['影像', '摄影', '装置', '纪录'];
@@ -39,6 +40,7 @@ export default function AdminCollection() {
       .then((data) => setItems(data.map((item: any) => ({
         ...item,
         tags: Array.isArray(item.tags) ? item.tags : [],
+        content: item.content || '',
         cover_url: item.cover?.url || item.cover_url || '',
         cover_alt: item.cover?.alt || item.cover_alt || '',
       }))))
@@ -169,6 +171,15 @@ export default function AdminCollection() {
         <input type="text" value={form.cover_alt}
           onChange={(e) => setForm({ ...form, cover_alt: e.target.value })}
           className="w-full bg-[rgba(168,164,154,0.06)] border border-[rgba(168,164,154,0.15)] px-3 py-2 font-serif text-sm text-mist focus:outline-none focus:border-cinnabar" />
+      </div>
+      <div className="md:col-span-2">
+        <label className="block font-sans text-[10px] tracking-[0.1em] text-text-secondary uppercase mb-1">
+          作品详情（换行分段，用于详情页展示）
+        </label>
+        <textarea value={form.content} rows={8}
+          onChange={(e) => setForm({ ...form, content: e.target.value })}
+          className="w-full bg-[rgba(168,164,154,0.06)] border border-[rgba(168,164,154,0.15)] px-3 py-2 font-serif text-sm text-mist focus:outline-none focus:border-cinnabar resize-y leading-relaxed"
+          placeholder="输入作品详细介绍，换行即分段..." />
       </div>
     </div>
   );

@@ -29,7 +29,7 @@ export default function WorksSection() {
           {items.map((item) => (
             <TiltCard key={item.slug} maxTilt={4} scale={1.01} className="work-card">
               <Link
-                to={`/collection`}
+                to={`/collection/${item.slug}`}
                 className="group relative block"
               >
                 <div className="relative aspect-[3/4] overflow-hidden">

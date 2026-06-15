@@ -85,6 +85,7 @@ function getDb() {
   // Migrate: add new columns if they don't exist (safe to run on existing DB)
   try { db.exec('ALTER TABLE journal_posts ADD COLUMN content TEXT DEFAULT \'\''); } catch {}
   try { db.exec('ALTER TABLE journal_posts ADD COLUMN image_url TEXT DEFAULT \'\''); } catch {}
+  try { db.exec('ALTER TABLE collection_items ADD COLUMN content TEXT DEFAULT \'\''); } catch {}
 
   // Seed default data if tables are empty
   seedData();

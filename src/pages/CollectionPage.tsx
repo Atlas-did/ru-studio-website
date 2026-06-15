@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { useScrollReveal } from '@/hooks/useScrollReveal';
 import { useSiteData } from '@/hooks/useSiteData';
 import { api } from '@/lib/api';
@@ -56,7 +57,11 @@ export default function CollectionPage() {
       <div ref={gridRef} className="px-6 md:px-12 pb-24 md:pb-40">
         <div className="max-w-[1440px] mx-auto grid grid-cols-1 md:grid-cols-3 gap-6">
           {filteredItems.map((item) => (
-            <div key={item.slug} className="collection-card group">
+            <Link
+              to={`/collection/${item.slug}`}
+              key={item.slug}
+              className="collection-card group block cursor-pointer"
+            >
               <div className="relative aspect-[3/4] overflow-hidden">
                 <img
                   src={item.cover.url}
@@ -67,7 +72,7 @@ export default function CollectionPage() {
                 <div className="absolute inset-0 border border-mist/0 group-hover:border-mist/60 transition-all duration-500 pointer-events-none" />
                 <div className="absolute inset-0 bg-ink/0 group-hover:bg-ink/30 transition-all duration-500 flex items-center justify-center">
                   <span className="font-sans text-[11px] tracking-[0.2em] text-mist border border-mist/60 px-4 py-2 opacity-0 group-hover:opacity-100 transition-all duration-500 translate-y-2 group-hover:translate-y-0">
-                    VIEW
+                    VIEW DETAIL
                   </span>
                 </div>
               </div>
@@ -96,7 +101,7 @@ export default function CollectionPage() {
                   </span>
                 ))}
               </div>
-            </div>
+            </Link>
           ))}
         </div>
       </div>
