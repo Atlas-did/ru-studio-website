@@ -91,7 +91,7 @@ router.get('/about', (req, res) => {
 });
 
 // POST /api/contact — submit contact form
-router.post('/contact', (req, res) => {
+router.post('/contact', async (req, res) => {
   try {
     const db = getDb();
     const { name, organization, purpose, email, message } = req.body;
@@ -103,6 +103,43 @@ router.post('/contact', (req, res) => {
     db.prepare(
       'INSERT INTO contacts (name, organization, purpose, email, message) VALUES (?, ?, ?, ?, ?)'
     ).run(name, organization || '', purpose, email, message || '');
+
+    // Try to send email notification (silently fail if SMTP not configured)
+    try {
+      const nodemailer = await import('nodemailer');
+      const smtpHost = process.env.SMTP_HOST;
+      const smtpUser = process.env.SMTP_USER;
+      const smtpPass = process.env.SMTP_PASS;
+      const notifyEmail = process.env.NOTIFY_EMAIL || 'wu27@qfnu.edu.cn';
+
+      if (smtpHost && smtpUser && smtpPass) {
+        const transporter = nodemailer.default.createTransport({
+          host: smtpHost,
+          port: parseInt(process.env.SMTP_PORT || '587'),
+          secure: process.env.SMTP_SECURE === 'true',
+          auth: { user: smtpUser, pass: smtpPass },
+        });
+
+        await transporter.sendMail({
+          from: smtpUser,
+          to: notifyEmail,
+          subject: `[RU STUDIO] 新的合作联系：${purpose}`,
+          html: `
+            <h3>新的合作联系</h3>
+            <p><strong>姓名：</strong>${name}</p>
+            <p><strong>机构：</strong>${organization || '未填写'}</p>
+            <p><strong>合作意向：</strong>${purpose}</p>
+            <p><strong>邮箱：</strong>${email}</p>
+            <p><strong>备注：</strong>${message || '无'}</p>
+            <hr/>
+            <p style="color:#888;font-size:12px;">此邮件由 RU STUDIO 官网自动发送。登录 <a href="${process.env.SITE_URL || ''}/#/admin">管理后台</a> 查看所有留言。</p>
+          `,
+        });
+        console.log('Email notification sent to', notifyEmail);
+      }
+    } catch (emailErr) {
+      console.log('Email not sent (SMTP not configured):', (emailErr as Error).message);
+    }
 
     res.json({ success: true, message: '感谢您的来信，我们会尽快与您取得联系。' });
   } catch (err) {

@@ -41,7 +41,29 @@ export function useSiteData<T>(
     fetcher()
       .then((result) => {
         if (mounted.current && id === fetchId.current) {
-          setData(result);
+          // Merge: prefer non-empty API data, but keep initial data for empty fields
+          if (initialData && result && typeof result === 'object') {
+            if (Array.isArray(result) && Array.isArray(initialData) && result.length === 0) {
+              // API returned empty array, keep initial data
+              setData(initialData);
+            } else if (!Array.isArray(result)) {
+              // Merge objects: API wins for non-empty, initial data fills gaps
+              const merged = { ...initialData, ...result };
+              // But for string fields, if API returned empty string, keep initial value
+              for (const key of Object.keys(merged)) {
+                if ((result as any)[key] === '' || (result as any)[key] === null || (result as any)[key] === undefined) {
+                  if ((initialData as any)[key]) {
+                    (merged as any)[key] = (initialData as any)[key];
+                  }
+                }
+              }
+              setData(merged as T);
+            } else {
+              setData(result);
+            }
+          } else {
+            setData(result);
+          }
           setLoading(false);
         }
       })

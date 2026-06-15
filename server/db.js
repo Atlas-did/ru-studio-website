@@ -97,6 +97,28 @@ function getDb() {
   // Migrate: update email if it still has old default
   db.prepare('UPDATE site_config SET value = ? WHERE key = ? AND value = ?').run('wu27@qfnu.edu.cn', 'contactEmail', 'hello@rustudio.cn');
 
+  // Migrate: populate empty content fields for existing rows (Railway fix)
+  const contentMap: Record<string, string> = {
+    'confucius-culture-festival': '2024年9月，第三十九届中国国际孔子文化节在山东曲阜盛大开幕。本届文化节以"文明对话、和合共生"为主题，汇聚了来自30多个国家和地区的文化机构、学者与艺术家。\n\n作为扎根曲阜的本土文创品牌，"儒意"受邀在文化创意展区设立了独立展位。我们精心布置了以"文房静物"为主题的展示空间——以宣纸为墙、以砚台为景、以墨香为引，将传统书房的静谧之美搬进了现代展馆。\n\n展出的核心作品包括"论语书签"系列、"孔庙墨影"摄影长卷，以及首次公开亮相的"大成殿"建筑微雕模型。其中"论语书签"以青铜材质复刻竹简形制，表面镌刻微缩《论语》章句，在光影流转间呈现出古籍翻阅的视觉效果，成为全场最受瞩目的单品之一。\n\n七天展期内，我们的展位累计接待访客超过5000人次，收到合作意向近百份。许多年轻观众表示，这些作品让他们第一次感受到"原来儒家文化可以这么酷"。',
+    'new-product-launch': '经过近半年的设计与打样，我们正式推出2024秋冬新品——「墨影」系列。\n\n这个系列的灵感来源于孔庙建筑的独特光影关系。我们花了整整两个月的时间，在不同季节、不同时段拍摄孔庙的飞檐、斗拱、廊柱与光影的交织变化，从中提取出最具代表性的线条与轮廓。\n\n「墨影」系列包含三款核心产品：墨影书签套装、光影笔记本、檐角尺。整个系列采用黑、白、金三色为主调，延续了"儒意"一贯的东方美学风格。',
+    'university-cooperation': '11月3日，"儒意"与曲阜师范大学正式签署战略合作协议，双方将共建「儒家美学实验室」。\n\n签约仪式在曲阜师范大学科技楼举行。校方代表表示，曲阜师大作为坐落在孔子故里的高等学府，在儒家文化研究领域拥有深厚的学术积累，而"儒意"团队在设计转化与市场运营方面具备丰富经验，双方的合作将实现优势互补。\n\n「儒家美学实验室」将聚焦三个方向：文献解码、设计转译、市场验证。实验室首批项目将于2025年春季启动。',
+    'design-awards': '喜讯！「论语书签」在第十二届中国文创设计大赛中荣获金奖！\n\n本届大赛由中国文化产业协会主办，吸引了来自全国各地的近千件参赛作品。评审团由来自故宫博物院、中国美术学院、中央美术学院的专家学者组成。\n\n评审意见写道："作品以青铜材质复刻竹简形制，将《论语》文本微缩镌刻于方寸之间，既保留了古籍的质感与温度，又赋予了当代的审美与功能性。"',
+  };
+  const updateContent = db.prepare('UPDATE journal_posts SET content = ? WHERE slug = ? AND (content IS NULL OR content = ?)');
+  for (const [slug, content] of Object.entries(contentMap)) {
+    updateContent.run(content, slug, '');
+  }
+
+  // Also populate about_sections if table exists but is empty
+  const aboutCount = db.prepare('SELECT COUNT(*) as count FROM about_sections').get();
+  if (aboutCount.count === 0) {
+    const insertAbout = db.prepare('INSERT INTO about_sections (id, title, content, sort_order) VALUES (?, ?, ?, ?)');
+    insertAbout.run('mission', '品牌使命', '以「向历史借灵感，为当代造美物」为核心理念，通过学术解码、创意转化、体验升级，让儒家文化从典籍与古迹中走出，成为可触摸、可使用、可共鸣的生活载体。', 0);
+    insertAbout.run('vision', '品牌愿景', '构建「儒家文化阐释第一品牌」，打造集研究、设计、生产、销售于一体的文旅融合生态，成为连接传统文化与现代生活的核心桥梁。', 1);
+    insertAbout.run('business', '核心业务板块', '01. 产品矩阵构建\n经典复刻、生活美学、互动体验、定制服务四大系列，覆盖从日常文具到高端收藏的全线产品。\n\n02. 体验场景打造\n线下体验空间、MR数字文创、校园传播三位一体的沉浸式文化消费场景。\n\n03. 文化传播运营\n内容引流、渠道渗透、公益联动，构建多维度的儒家文化传播体系。', 2);
+    insertAbout.run('roadmap', '发展规划', '短期 1-2 年\n完善核心产品矩阵，打造3-5款年度爆款，实现年营收突破80万元。\n\n中期 3-5 年\n建立儒家文创设计标准体系，开展IP授权业务，拓展省外合作渠道。\n\n长期 5-10 年\n推动文创产品成为儒学海外传播载体，构建国际化文化品牌。', 3);
+  }
+
   // Seed default data if tables are empty
   seedData();
 
