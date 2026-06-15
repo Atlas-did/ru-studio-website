@@ -78,6 +78,18 @@ router.get('/journal', (req, res) => {
   }
 });
 
+// GET /api/about
+router.get('/about', (req, res) => {
+  try {
+    const db = getDb();
+    const sections = db.prepare('SELECT * FROM about_sections ORDER BY sort_order ASC').all();
+    res.json(sections);
+  } catch (err) {
+    console.error('Error fetching about sections:', err);
+    res.status(500).json({ error: '服务器错误' });
+  }
+});
+
 // POST /api/contact — submit contact form
 router.post('/contact', (req, res) => {
   try {

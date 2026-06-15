@@ -5,6 +5,7 @@ import { isAuthenticated, clearAuth, getUsername } from '@/lib/admin-api';
 const navItems = [
   { label: 'Dashboard', path: '/admin', icon: '◇' },
   { label: 'Site Config', path: '/admin/config', icon: '⚙' },
+  { label: 'About Page', path: '/admin/about', icon: '▤' },
   { label: 'Concepts', path: '/admin/concepts', icon: '◈' },
   { label: 'Collection', path: '/admin/collection', icon: '◆' },
   { label: 'Journal', path: '/admin/journal', icon: '◇' },

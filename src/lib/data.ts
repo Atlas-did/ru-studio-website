@@ -47,7 +47,7 @@ export function getSiteConfig(): SiteConfig {
     brandName: '儒意',
     brandNameEn: 'RU STUDIO',
     tagline: '向历史借灵感，为当代造美物。',
-    contactEmail: 'hello@rustudio.cn',
+    contactEmail: 'wu27@qfnu.edu.cn',
   };
 }
 

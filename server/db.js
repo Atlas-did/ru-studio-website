@@ -80,12 +80,22 @@ function getDb() {
       username TEXT UNIQUE NOT NULL,
       password_hash TEXT NOT NULL
     );
+
+    CREATE TABLE IF NOT EXISTS about_sections (
+      id TEXT PRIMARY KEY,
+      title TEXT NOT NULL,
+      content TEXT NOT NULL,
+      sort_order INTEGER DEFAULT 0
+    );
   `);
 
   // Migrate: add new columns if they don't exist (safe to run on existing DB)
   try { db.exec('ALTER TABLE journal_posts ADD COLUMN content TEXT DEFAULT \'\''); } catch {}
   try { db.exec('ALTER TABLE journal_posts ADD COLUMN image_url TEXT DEFAULT \'\''); } catch {}
   try { db.exec('ALTER TABLE collection_items ADD COLUMN content TEXT DEFAULT \'\''); } catch {}
+
+  // Migrate: update email if it still has old default
+  db.prepare('UPDATE site_config SET value = ? WHERE key = ? AND value = ?').run('wu27@qfnu.edu.cn', 'contactEmail', 'hello@rustudio.cn');
 
   // Seed default data if tables are empty
   seedData();
@@ -103,7 +113,7 @@ function seedData() {
     insertConfig.run('brandName', '儒意');
     insertConfig.run('brandNameEn', 'RU STUDIO');
     insertConfig.run('tagline', '向历史借灵感，为当代造美物。');
-    insertConfig.run('contactEmail', 'hello@rustudio.cn');
+    insertConfig.run('contactEmail', 'wu27@qfnu.edu.cn');
   }
 
   // Seed concepts
@@ -151,6 +161,16 @@ function seedData() {
       { slug: 'design-awards', title: '荣获2024年度文创设计金奖', excerpt: '「论语书签」在第十二届中国文创设计大赛中脱颖而出，获得评委一致好评。', date: '2024-12-01', category: '荣誉', content: '喜讯！「论语书签」在第十二届中国文创设计大赛中荣获金奖！\n\n本届大赛由中国文化产业协会主办，吸引了来自全国各地的近千件参赛作品。评审团由来自故宫博物院、中国美术学院、中央美术学院的专家学者组成，评选标准包括文化内涵、设计创新、工艺品质和市场潜力四个维度。\n\n「论语书签」以"古籍新作"的设计理念获得评委的一致认可。评审意见写道："作品以青铜材质复刻竹简形制，将《论语》文本微缩镌刻于方寸之间，既保留了古籍的质感与温度，又赋予了当代的审美与功能性。在材料选择、工艺处理和文化表达三个层面均达到了较高水准，是一件兼具文化厚度与市场潜力的优秀作品。"\n\n这份荣誉属于整个团队，也属于所有支持"儒意"的朋友们。我们将以此为动力，继续深耕儒家文化的当代化表达，推出更多有温度、有态度的作品。', image_url: '', order: 3 },
     ];
     posts.forEach((p) => insertPost.run(p.slug, p.title, p.excerpt, p.date, p.category, p.content, p.image_url, p.order));
+  }
+
+  // Seed about page sections
+  const aboutCount = db.prepare('SELECT COUNT(*) as count FROM about_sections').get();
+  if (aboutCount.count === 0) {
+    const insertAbout = db.prepare('INSERT INTO about_sections (id, title, content, sort_order) VALUES (?, ?, ?, ?)');
+    insertAbout.run('mission', '品牌使命', '以「向历史借灵感，为当代造美物」为核心理念，通过学术解码、创意转化、体验升级，让儒家文化从典籍与古迹中走出，成为可触摸、可使用、可共鸣的生活载体。', 0);
+    insertAbout.run('vision', '品牌愿景', '构建「儒家文化阐释第一品牌」，打造集研究、设计、生产、销售于一体的文旅融合生态，成为连接传统文化与现代生活的核心桥梁。', 1);
+    insertAbout.run('business', '核心业务板块', '01. 产品矩阵构建\n经典复刻、生活美学、互动体验、定制服务四大系列，覆盖从日常文具到高端收藏的全线产品。\n\n02. 体验场景打造\n线下体验空间、MR数字文创、校园传播三位一体的沉浸式文化消费场景。\n\n03. 文化传播运营\n内容引流、渠道渗透、公益联动，构建多维度的儒家文化传播体系。', 2);
+    insertAbout.run('roadmap', '发展规划', '短期 1-2 年\n完善核心产品矩阵，打造3-5款年度爆款，实现年营收突破80万元。\n\n中期 3-5 年\n建立儒家文创设计标准体系，开展IP授权业务，拓展省外合作渠道。\n\n长期 5-10 年\n推动文创产品成为儒学海外传播载体，构建国际化文化品牌。', 3);
   }
 
   // Seed default admin (username: admin, password: admin123)

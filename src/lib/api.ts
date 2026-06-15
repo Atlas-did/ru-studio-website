@@ -83,6 +83,10 @@ export const api = {
     });
   },
 
+  async getAbout(): Promise<any[]> {
+    return tryApi('/api/about', () => []);
+  },
+
   async submitContact(data: {
     name: string;
     organization?: string;

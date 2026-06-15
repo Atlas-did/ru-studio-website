@@ -357,6 +357,35 @@ router.get('/stats', (req, res) => {
   }
 });
 
+// ─── About Sections ───
+router.get('/about', (req, res) => {
+  try {
+    const db = getDb();
+    const sections = db.prepare('SELECT * FROM about_sections ORDER BY sort_order ASC').all();
+    res.json(sections);
+  } catch (err) {
+    res.status(500).json({ error: '服务器错误' });
+  }
+});
+
+router.put('/about/:id', (req, res) => {
+  try {
+    const db = getDb();
+    const { id } = req.params;
+    const { title, content } = req.body;
+
+    const existing = db.prepare('SELECT * FROM about_sections WHERE id = ?').get(id);
+    if (!existing) return res.status(404).json({ error: '章节不存在' });
+
+    db.prepare('UPDATE about_sections SET title = ?, content = ? WHERE id = ?')
+      .run(title ?? existing.title, content ?? existing.content, id);
+
+    res.json({ success: true, message: '章节已更新' });
+  } catch (err) {
+    res.status(500).json({ error: '服务器错误' });
+  }
+});
+
 // ─── Get contacts list ───
 router.get('/contacts', (req, res) => {
   try {

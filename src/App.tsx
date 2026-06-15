@@ -11,6 +11,7 @@ import AdminLayout from '@/pages/admin/AdminLayout';
 import AdminLogin from '@/pages/admin/AdminLogin';
 import AdminDashboard from '@/pages/admin/AdminDashboard';
 import AdminSiteConfig from '@/pages/admin/AdminSiteConfig';
+import AdminAbout from '@/pages/admin/AdminAbout';
 import AdminConcepts from '@/pages/admin/AdminConcepts';
 import AdminCollection from '@/pages/admin/AdminCollection';
 import AdminJournal from '@/pages/admin/AdminJournal';
@@ -35,6 +36,7 @@ export default function App() {
         <Route path="/admin" element={<AdminLayout />}>
           <Route index element={<AdminDashboard />} />
           <Route path="config" element={<AdminSiteConfig />} />
+          <Route path="about" element={<AdminAbout />} />
           <Route path="concepts" element={<AdminConcepts />} />
           <Route path="collection" element={<AdminCollection />} />
           <Route path="journal" element={<AdminJournal />} />
