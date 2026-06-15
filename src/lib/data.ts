@@ -22,6 +22,8 @@ export interface JournalPost {
   excerpt: string;
   date: string;
   category: string;
+  content?: string;
+  image_url?: string;
 }
 
 export interface Concept {
@@ -184,6 +186,8 @@ export function getJournalPosts(): JournalPost[] {
       excerpt: '为期七天的文化节中，我们的「文房静物」系列受到了来自全国各地文化爱好者的广泛关注。',
       date: '2024-09-28',
       category: '展览',
+      content: '2024年9月，第三十九届中国国际孔子文化节在山东曲阜盛大开幕。\n\n作为扎根曲阜的本土文创品牌，"儒意"受邀在文化创意展区设立了独立展位。\n\n展出的核心作品包括"论语书签"系列、"孔庙墨影"摄影长卷，以及首次公开亮相的"大成殿"建筑微雕模型。\n\n七天展期内，我们的展位累计接待访客超过5000人次，收到合作意向近百份。',
+      image_url: '',
     },
     {
       slug: 'new-product-launch',
@@ -191,6 +195,8 @@ export function getJournalPosts(): JournalPost[] {
       excerpt: '以孔庙建筑光影为灵感，将飞檐斗拱的线条抽象为现代设计语言，打造兼具文化厚度与实用美学的日常器物。',
       date: '2024-10-15',
       category: '新品',
+      content: '经过近半年的设计与打样，我们正式推出2024秋冬新品——「墨影」系列。\n\n这个系列的灵感来源于孔庙建筑的独特光影关系。\n\n「墨影」系列包含三款核心产品：墨影书签套装、光影笔记本、檐角尺。\n\n整个系列采用黑、白、金三色为主调，延续了"儒意"一贯的东方美学风格。',
+      image_url: '',
     },
     {
       slug: 'university-cooperation',
@@ -198,6 +204,8 @@ export function getJournalPosts(): JournalPost[] {
       excerpt: '双方将共同建立「儒家美学实验室」，推动学术研究成果向文创产品的系统性转化。',
       date: '2024-11-03',
       category: '合作',
+      content: '11月3日，"儒意"与曲阜师范大学正式签署战略合作协议，双方将共建「儒家美学实验室」。\n\n「儒家美学实验室」将聚焦三个方向：文献解码、设计转译、市场验证。\n\n实验室首批项目将于2025年春季启动。',
+      image_url: '',
     },
     {
       slug: 'design-awards',
@@ -205,6 +213,8 @@ export function getJournalPosts(): JournalPost[] {
       excerpt: '「论语书签」在第十二届中国文创设计大赛中脱颖而出，获得评委一致好评。',
       date: '2024-12-01',
       category: '荣誉',
+      content: '喜讯！「论语书签」在第十二届中国文创设计大赛中荣获金奖！\n\n评审意见写道："作品以青铜材质复刻竹简形制，将《论语》文本微缩镌刻于方寸之间，是一件兼具文化厚度与市场潜力的优秀作品。"\n\n这份荣誉属于整个团队。',
+      image_url: '',
     },
   ];
 }

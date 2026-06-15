@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import { useScrollReveal } from '@/hooks/useScrollReveal';
 import { useSiteData } from '@/hooks/useSiteData';
 import { api } from '@/lib/api';
@@ -29,9 +30,10 @@ export default function JournalPage() {
       <div ref={listRef} className="px-6 md:px-12 pb-24 md:pb-40">
         <div className="max-w-[1440px] mx-auto">
           {(posts || []).map((post, index, arr) => (
-            <div
+            <Link
+              to={`/journal/${post.slug}`}
               key={post.slug}
-              className={`journal-entry group py-8 md:py-10 ${
+              className={`journal-entry group py-8 md:py-10 block cursor-pointer ${
                 index < arr.length - 1 ? 'border-b border-[rgba(168,164,154,0.3)]' : ''
               }`}
             >
@@ -56,7 +58,7 @@ export default function JournalPage() {
                   →
                 </span>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
       </div>

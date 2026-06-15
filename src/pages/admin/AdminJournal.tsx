@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { adminApi } from '@/lib/admin-api';
 
 interface JournalPost {
@@ -7,12 +7,14 @@ interface JournalPost {
   excerpt: string;
   date: string;
   category: string;
+  content: string;
+  image_url: string;
   sort_order: number;
 }
 
 const emptyPost: JournalPost = {
   slug: '', title: '', excerpt: '', date: new Date().toISOString().split('T')[0],
-  category: '展览', sort_order: 0,
+  category: '展览', content: '', image_url: '', sort_order: 0,
 };
 
 export default function AdminJournal() {
@@ -20,8 +22,10 @@ export default function AdminJournal() {
   const [editing, setEditing] = useState<JournalPost | null>(null);
   const [creating, setCreating] = useState(false);
   const [form, setForm] = useState<JournalPost>(emptyPost);
+  const [uploading, setUploading] = useState(false);
   const [loading, setLoading] = useState(true);
   const [msg, setMsg] = useState('');
+  const fileRef = useRef<HTMLInputElement>(null);
 
   const fetchData = () => {
     adminApi
@@ -32,6 +36,21 @@ export default function AdminJournal() {
   };
 
   useEffect(fetchData, []);
+
+  const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploading(true);
+    try {
+      const result = await adminApi.uploadImage(file);
+      setForm((prev) => ({ ...prev, image_url: result.url }));
+      setMsg('图片已上传');
+    } catch {
+      setMsg('上传失败');
+    } finally {
+      setUploading(false);
+    }
+  };
 
   const handleSave = async () => {
     setMsg('');
@@ -68,7 +87,7 @@ export default function AdminJournal() {
   };
 
   const openEdit = (p: JournalPost) => {
-    setForm({ ...p });
+    setForm({ ...p, content: (p as any).content || '', image_url: (p as any).image_url || '' });
     setCreating(false);
     setEditing(p);
   };
@@ -134,9 +153,35 @@ export default function AdminJournal() {
             </div>
             <div className="md:col-span-2">
               <label className="block font-sans text-[10px] tracking-[0.1em] text-text-secondary uppercase mb-1">摘要</label>
-              <textarea value={form.excerpt} rows={3}
+              <textarea value={form.excerpt} rows={2}
                 onChange={(e) => setForm({ ...form, excerpt: e.target.value })}
                 className="w-full bg-[rgba(168,164,154,0.06)] border border-[rgba(168,164,154,0.15)] px-3 py-2 font-serif text-sm text-mist focus:outline-none focus:border-cinnabar resize-none" />
+            </div>
+            <div className="md:col-span-2">
+              <label className="block font-sans text-[10px] tracking-[0.1em] text-text-secondary uppercase mb-1">封面图片</label>
+              <div className="flex gap-2 items-start">
+                <input type="text" value={form.image_url}
+                  onChange={(e) => setForm({ ...form, image_url: e.target.value })}
+                  placeholder="图片URL（可选）"
+                  className="flex-1 bg-[rgba(168,164,154,0.06)] border border-[rgba(168,164,154,0.15)] px-3 py-2 font-mono text-xs text-mist focus:outline-none focus:border-cinnabar" />
+                <input ref={fileRef} type="file" accept="image/*" onChange={handleUpload} className="hidden" />
+                <button onClick={() => fileRef.current?.click()} disabled={uploading}
+                  className="font-sans text-[10px] text-mist border border-[rgba(168,164,154,0.3)] px-3 py-2 hover:bg-cinnabar hover:border-cinnabar transition-all uppercase whitespace-nowrap disabled:opacity-50">
+                  {uploading ? '...' : 'Upload'}
+                </button>
+              </div>
+              {form.image_url && (
+                <img src={form.image_url} alt="preview" className="mt-2 w-40 object-cover border border-[rgba(168,164,154,0.15)]" />
+              )}
+            </div>
+            <div className="md:col-span-2">
+              <label className="block font-sans text-[10px] tracking-[0.1em] text-text-secondary uppercase mb-1">
+                正文内容（换行分段，支持多段落长文）
+              </label>
+              <textarea value={form.content} rows={12}
+                onChange={(e) => setForm({ ...form, content: e.target.value })}
+                className="w-full bg-[rgba(168,164,154,0.06)] border border-[rgba(168,164,154,0.15)] px-3 py-2 font-serif text-sm text-mist focus:outline-none focus:border-cinnabar resize-y leading-relaxed"
+                placeholder="输入文章正文，换行即分段..." />
             </div>
           </div>
           <div className="flex gap-3">

@@ -257,15 +257,15 @@ router.get('/journal', (req, res) => {
 router.post('/journal', (req, res) => {
   try {
     const db = getDb();
-    const { slug, title, excerpt, date, category, sort_order } = req.body;
+    const { slug, title, excerpt, date, category, content, image_url, sort_order } = req.body;
 
     if (!slug || !title || !excerpt || !date || !category) {
       return res.status(400).json({ error: '请填写所有必填字段' });
     }
 
     db.prepare(
-      'INSERT INTO journal_posts (slug, title, excerpt, date, category, sort_order) VALUES (?, ?, ?, ?, ?, ?)'
-    ).run(slug, title, excerpt, date, category, sort_order || 0);
+      'INSERT INTO journal_posts (slug, title, excerpt, date, category, content, image_url, sort_order) VALUES (?, ?, ?, ?, ?, ?, ?, ?)'
+    ).run(slug, title, excerpt, date, category, content || '', image_url || '', sort_order || 0);
 
     res.json({ success: true, message: '日志已发布' });
   } catch (err) {
@@ -289,11 +289,13 @@ router.put('/journal/:slug', (req, res) => {
     const excerpt = fields.excerpt ?? existing.excerpt;
     const date = fields.date ?? existing.date;
     const category = fields.category ?? existing.category;
+    const content = fields.content !== undefined ? fields.content : existing.content;
+    const image_url = fields.image_url !== undefined ? fields.image_url : existing.image_url;
     const sort_order = fields.sort_order !== undefined ? fields.sort_order : existing.sort_order;
 
     db.prepare(
-      'UPDATE journal_posts SET title=?, excerpt=?, date=?, category=?, sort_order=? WHERE slug=?'
-    ).run(title, excerpt, date, category, sort_order, slug);
+      'UPDATE journal_posts SET title=?, excerpt=?, date=?, category=?, content=?, image_url=?, sort_order=? WHERE slug=?'
+    ).run(title, excerpt, date, category, content || '', image_url || '', sort_order, slug);
 
     res.json({ success: true, message: '日志已更新' });
   } catch (err) {

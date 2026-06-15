@@ -44,9 +44,9 @@ export default function JournalPreview() {
           <div className="md:col-span-3 flex flex-col">
             {posts.map((post, index) => (
               <Link
-                to="/journal"
+                to={`/journal/${post.slug}`}
                 key={post.slug}
-                className={`group py-6 md:py-8 ${
+                className={`group py-6 md:py-8 block cursor-pointer ${
                   index < posts.length - 1
                     ? 'border-b border-[rgba(168,164,154,0.3)]'
                     : ''

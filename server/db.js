@@ -60,6 +60,8 @@ function getDb() {
       excerpt TEXT NOT NULL,
       date TEXT NOT NULL,
       category TEXT NOT NULL,
+      content TEXT DEFAULT '',
+      image_url TEXT DEFAULT '',
       sort_order INTEGER DEFAULT 0
     );
 
@@ -79,6 +81,10 @@ function getDb() {
       password_hash TEXT NOT NULL
     );
   `);
+
+  // Migrate: add new columns if they don't exist (safe to run on existing DB)
+  try { db.exec('ALTER TABLE journal_posts ADD COLUMN content TEXT DEFAULT \'\''); } catch {}
+  try { db.exec('ALTER TABLE journal_posts ADD COLUMN image_url TEXT DEFAULT \'\''); } catch {}
 
   // Seed default data if tables are empty
   seedData();
@@ -135,15 +141,15 @@ function seedData() {
   const postsCount = db.prepare('SELECT COUNT(*) as count FROM journal_posts').get();
   if (postsCount.count === 0) {
     const insertPost = db.prepare(
-      'INSERT INTO journal_posts (slug, title, excerpt, date, category, sort_order) VALUES (?, ?, ?, ?, ?, ?)'
+      'INSERT INTO journal_posts (slug, title, excerpt, date, category, content, image_url, sort_order) VALUES (?, ?, ?, ?, ?, ?, ?, ?)'
     );
     const posts = [
-      { slug: 'confucius-culture-festival', title: '中国国际孔子文化节参展回顾', excerpt: '为期七天的文化节中，我们的「文房静物」系列受到了来自全国各地文化爱好者的广泛关注。', date: '2024-09-28', category: '展览', order: 0 },
-      { slug: 'new-product-launch', title: '秋冬新品「墨影」系列正式发布', excerpt: '以孔庙建筑光影为灵感，将飞檐斗拱的线条抽象为现代设计语言，打造兼具文化厚度与实用美学的日常器物。', date: '2024-10-15', category: '新品', order: 1 },
-      { slug: 'university-cooperation', title: '与曲阜师范大学达成深度合作', excerpt: '双方将共同建立「儒家美学实验室」，推动学术研究成果向文创产品的系统性转化。', date: '2024-11-03', category: '合作', order: 2 },
-      { slug: 'design-awards', title: '荣获2024年度文创设计金奖', excerpt: '「论语书签」在第十二届中国文创设计大赛中脱颖而出，获得评委一致好评。', date: '2024-12-01', category: '荣誉', order: 3 },
+      { slug: 'confucius-culture-festival', title: '中国国际孔子文化节参展回顾', excerpt: '为期七天的文化节中，我们的「文房静物」系列受到了来自全国各地文化爱好者的广泛关注。', date: '2024-09-28', category: '展览', content: '2024年9月，第三十九届中国国际孔子文化节在山东曲阜盛大开幕。本届文化节以"文明对话、和合共生"为主题，汇聚了来自30多个国家和地区的文化机构、学者与艺术家。\n\n作为扎根曲阜的本土文创品牌，"儒意"受邀在文化创意展区设立了独立展位。我们精心布置了以"文房静物"为主题的展示空间——以宣纸为墙、以砚台为景、以墨香为引，将传统书房的静谧之美搬进了现代展馆。\n\n展出的核心作品包括"论语书签"系列、"孔庙墨影"摄影长卷，以及首次公开亮相的"大成殿"建筑微雕模型。其中"论语书签"以青铜材质复刻竹简形制，表面镌刻微缩《论语》章句，在光影流转间呈现出古籍翻阅的视觉效果，成为全场最受瞩目的单品之一。\n\n七天展期内，我们的展位累计接待访客超过5000人次，收到合作意向近百份。许多年轻观众表示，这些作品让他们第一次感受到"原来儒家文化可以这么酷"。\n\n这次参展让我们更加坚定了方向：用当代的设计语言、年轻的表达方式，让千年文脉重新流转于日常之中。', image_url: '', order: 0 },
+      { slug: 'new-product-launch', title: '秋冬新品「墨影」系列正式发布', excerpt: '以孔庙建筑光影为灵感，将飞檐斗拱的线条抽象为现代设计语言，打造兼具文化厚度与实用美学的日常器物。', date: '2024-10-15', category: '新品', content: '经过近半年的设计与打样，我们正式推出2024秋冬新品——「墨影」系列。\n\n这个系列的灵感来源于孔庙建筑的独特光影关系。我们花了整整两个月的时间，在不同季节、不同时段拍摄孔庙的飞檐、斗拱、廊柱与光影的交织变化，从中提取出最具代表性的线条与轮廓。\n\n「墨影」系列包含三款核心产品：\n\n1. 墨影书签套装——以孔庙大成殿飞檐的剪影为造型，采用黄铜蚀刻工艺，表面做旧处理，呈现出水墨画般的层次感。\n2. 光影笔记本——封面压印孔庙建筑群的线描图案，在不同角度下呈现出若隐若现的光影变化，内页选用80g象牙白道林纸，书写顺滑。\n3. 檐角尺——以斗拱结构为原型的黄铜直尺，既是文具，也是案头摆件。\n\n整个系列采用黑、白、金三色为主调，延续了"儒意"一贯的东方美学风格，同时更加注重产品的实用性与日常感。', image_url: '', order: 1 },
+      { slug: 'university-cooperation', title: '与曲阜师范大学达成深度合作', excerpt: '双方将共同建立「儒家美学实验室」，推动学术研究成果向文创产品的系统性转化。', date: '2024-11-03', category: '合作', content: '11月3日，"儒意"与曲阜师范大学正式签署战略合作协议，双方将共建「儒家美学实验室」。\n\n签约仪式在曲阜师范大学科技楼举行。校方代表表示，曲阜师大作为坐落在孔子故里的高等学府，在儒家文化研究领域拥有深厚的学术积累，而"儒意"团队在设计转化与市场运营方面具备丰富经验，双方的合作将实现优势互补。\n\n「儒家美学实验室」将聚焦三个方向：\n\n一、文献解码——将《论语》《礼记》等经典中的美学思想、礼仪制度、器物描述进行系统梳理，建立可供设计师参考的"儒家美学数据库"。\n二、设计转译——由"儒意"设计团队根据学术研究成果，将抽象的哲学概念转化为具体的产品形态与视觉语言。\n三、市场验证——通过校园文创商店、线上渠道、文化市集等方式，测试产品在年轻消费者中的接受度，形成"研究-设计-反馈"的闭环。\n\n实验室首批项目将于2025年春季启动，敬请期待。', image_url: '', order: 2 },
+      { slug: 'design-awards', title: '荣获2024年度文创设计金奖', excerpt: '「论语书签」在第十二届中国文创设计大赛中脱颖而出，获得评委一致好评。', date: '2024-12-01', category: '荣誉', content: '喜讯！「论语书签」在第十二届中国文创设计大赛中荣获金奖！\n\n本届大赛由中国文化产业协会主办，吸引了来自全国各地的近千件参赛作品。评审团由来自故宫博物院、中国美术学院、中央美术学院的专家学者组成，评选标准包括文化内涵、设计创新、工艺品质和市场潜力四个维度。\n\n「论语书签」以"古籍新作"的设计理念获得评委的一致认可。评审意见写道："作品以青铜材质复刻竹简形制，将《论语》文本微缩镌刻于方寸之间，既保留了古籍的质感与温度，又赋予了当代的审美与功能性。在材料选择、工艺处理和文化表达三个层面均达到了较高水准，是一件兼具文化厚度与市场潜力的优秀作品。"\n\n这份荣誉属于整个团队，也属于所有支持"儒意"的朋友们。我们将以此为动力，继续深耕儒家文化的当代化表达，推出更多有温度、有态度的作品。', image_url: '', order: 3 },
     ];
-    posts.forEach((p) => insertPost.run(p.slug, p.title, p.excerpt, p.date, p.category, p.order));
+    posts.forEach((p) => insertPost.run(p.slug, p.title, p.excerpt, p.date, p.category, p.content, p.image_url, p.order));
   }
 
   // Seed default admin (username: admin, password: admin123)

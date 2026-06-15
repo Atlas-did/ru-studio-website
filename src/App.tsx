@@ -4,6 +4,7 @@ import HomePage from '@/pages/HomePage';
 import AboutPage from '@/pages/AboutPage';
 import CollectionPage from '@/pages/CollectionPage';
 import JournalPage from '@/pages/JournalPage';
+import JournalDetailPage from '@/pages/JournalDetailPage';
 import CooperationPage from '@/pages/CooperationPage';
 import AdminLayout from '@/pages/admin/AdminLayout';
 import AdminLogin from '@/pages/admin/AdminLogin';
@@ -23,6 +24,7 @@ export default function App() {
           <Route path="/about" element={<AboutPage />} />
           <Route path="/collection" element={<CollectionPage />} />
           <Route path="/journal" element={<JournalPage />} />
+          <Route path="/journal/:slug" element={<JournalDetailPage />} />
           <Route path="/cooperation" element={<CooperationPage />} />
         </Route>
 
