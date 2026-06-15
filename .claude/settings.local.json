@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm install *)",
+      "Read(//c/Users/finef/AppData/Roaming/**)",
+      "Read(//c/Users/finef/**)"
+    ]
+  }
+}
