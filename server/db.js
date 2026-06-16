@@ -1,8 +1,8 @@
-import { DatabaseSync } from 'node:sqlite';
 import path from 'path';
 import fs from 'fs';
 import { fileURLToPath } from 'url';
 import bcrypt from 'bcryptjs';
+import { createRequire } from 'module';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -14,6 +14,24 @@ if (!fs.existsSync(dataDir)) {
 }
 
 const DB_PATH = path.join(dataDir, 'rustudio.db');
+
+// Select SQLite driver: node:sqlite (Node 22.5+) or better-sqlite3 fallback
+let DatabaseSync;
+try {
+  const sqlite = await import('node:sqlite');
+  DatabaseSync = sqlite.DatabaseSync;
+  console.log('Using node:sqlite built-in module');
+} catch {
+  try {
+    const require = createRequire(import.meta.url);
+    DatabaseSync = require('better-sqlite3');
+    console.log('Using better-sqlite3 (fallback)');
+  } catch (e2) {
+    console.error('No SQLite driver available. Install better-sqlite3 or upgrade to Node 22.5+.');
+    console.error(e2.message);
+    process.exit(1);
+  }
+}
 
 let db = null;
 

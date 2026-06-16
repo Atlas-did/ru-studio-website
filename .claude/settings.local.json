@@ -3,7 +3,8 @@
     "allow": [
       "Bash(npm install *)",
       "Read(//c/Users/finef/AppData/Roaming/**)",
-      "Read(//c/Users/finef/**)"
+      "Read(//c/Users/finef/**)",
+      "Bash(PATH=/c/nvm4w/nodejs:__TRACKED_VAR__ /c/nvm4w/nodejs/node.exe /c/nvm4w/nodejs/node_modules/npm/bin/npm-cli.js install better-sqlite3 --prefix d:/Temp_download/app)"
     ]
   }
 }
