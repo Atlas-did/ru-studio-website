@@ -1,5 +1,6 @@
 import { HashRouter, Routes, Route } from 'react-router-dom';
 import Layout from '@/components/Layout';
+import PageTransition from '@/components/PageTransition';
 import HomePage from '@/pages/HomePage';
 import AboutPage from '@/pages/AboutPage';
 import CollectionPage from '@/pages/CollectionPage';
@@ -20,15 +21,17 @@ export default function App() {
   return (
     <HashRouter>
       <Routes>
-        {/* Public routes */}
-        <Route element={<Layout />}>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/about" element={<AboutPage />} />
-          <Route path="/collection" element={<CollectionPage />} />
-          <Route path="/collection/:slug" element={<CollectionDetailPage />} />
-          <Route path="/journal" element={<JournalPage />} />
-          <Route path="/journal/:slug" element={<JournalDetailPage />} />
-          <Route path="/cooperation" element={<CooperationPage />} />
+        {/* Public routes — PageTransition wraps Layout for ink-wipe cross-page animation */}
+        <Route element={<PageTransition />}>
+          <Route element={<Layout />}>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/about" element={<AboutPage />} />
+            <Route path="/collection" element={<CollectionPage />} />
+            <Route path="/collection/:slug" element={<CollectionDetailPage />} />
+            <Route path="/journal" element={<JournalPage />} />
+            <Route path="/journal/:slug" element={<JournalDetailPage />} />
+            <Route path="/cooperation" element={<CooperationPage />} />
+          </Route>
         </Route>
 
         {/* Admin routes */}

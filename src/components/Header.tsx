@@ -128,7 +128,7 @@ export default function Header() {
         {/* Mobile Menu Button */}
         <button
           onClick={() => setMenuOpen(!menuOpen)}
-          className="md:hidden relative z-10 w-8 h-8 flex flex-col items-center justify-center gap-1.5"
+          className="md:hidden relative z-10 w-11 h-11 flex flex-col items-center justify-center gap-1.5"
           aria-label="Toggle menu"
         >
           <span

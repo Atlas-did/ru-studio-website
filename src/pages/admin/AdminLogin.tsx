@@ -60,8 +60,8 @@ export default function AdminLogin() {
           </button>
         </form>
 
-        <p className="mt-8 text-center font-sans text-[10px] text-text-secondary/40">
-          默认密码: admin123（请尽快修改）
+        <p className="mt-8 text-center font-sans text-[10px] text-text-secondary/30">
+          RU STUDIO Admin Panel
         </p>
       </div>
     </div>

@@ -41,7 +41,7 @@ export default function CollectionPage() {
             <button
               key={cat}
               onClick={() => setActiveFilter(cat)}
-              className={`font-sans text-[11px] tracking-[0.15em] uppercase pb-2 border-b transition-all duration-300 ${
+              className={`font-sans text-[11px] tracking-[0.15em] uppercase px-2 py-2 border-b transition-all duration-300 min-h-[44px] flex items-center ${
                 activeFilter === cat
                   ? 'text-mist border-mist'
                   : 'text-text-secondary border-transparent hover:text-mist hover:border-text-secondary'

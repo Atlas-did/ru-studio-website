@@ -204,7 +204,7 @@ export default function HeroSection() {
         className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-2"
       >
         <span className="text-caption-s text-stone/50 tracking-overline">SCROLL</span>
-        <div className="w-px h-8 bg-stone/30 relative overflow-hidden">
+        <div className="w-px h-8 bg-ink-lighter/30 relative overflow-hidden">
           <div className="absolute top-0 left-0 w-full h-full bg-mist/60 animate-pulse" />
         </div>
       </div>

@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { adminApi } from '@/lib/admin-api';
 
 interface AboutSection {
   id: string;
@@ -16,7 +15,6 @@ export default function AdminAbout() {
   const [msg, setMsg] = useState('');
 
   const fetchData = () => {
-    adminApi.getConcepts(); // no-op warmup
     fetch('/api/admin/about', {
       headers: { 'Authorization': `Bearer ${sessionStorage.getItem('ru_admin_token')}` }
     })

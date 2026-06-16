@@ -82,7 +82,7 @@ export default function AboutPage() {
             }
 
             if (section.id === 'roadmap') {
-              const colors = ['cinnabar', 'gold', 'indigo'];
+              const borderColors = ['border-l-cinnabar', 'border-l-gold', 'border-l-indigo'];
               return (
                 <div key={section.id} className="about-block md:col-span-2 pt-8 border-t border-[rgba(168,164,154,0.18)]">
                   <h2 className="font-serif text-xl font-medium text-mist mb-6">{section.title}</h2>
@@ -92,7 +92,7 @@ export default function AboutPage() {
                       const period = lines[0] || '';
                       const desc = lines.slice(1).join('\n');
                       return (
-                        <div key={idx} className={`border-l-2 border-${colors[idx] || 'cinnabar'} pl-6`}>
+                        <div key={idx} className={`border-l-2 ${borderColors[idx] || 'border-l-cinnabar'} pl-6`}>
                           <span className="font-sans text-[11px] tracking-[0.15em] text-text-secondary uppercase">{period}</span>
                           <p className="mt-2 font-serif text-sm text-text-secondary leading-[1.8]">{desc}</p>
                         </div>
