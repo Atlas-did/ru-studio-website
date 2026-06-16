@@ -22,3 +22,11 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Reference / design files
+Kimi_Agent_儒意官网重构/
+
+# Database files (generated at runtime)
+data/rustudio.db
+data/rustudio.db-shm
+data/rustudio.db-wal
