@@ -1,18 +1,10 @@
 import { useEffect, useRef } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { useSiteData } from '@/hooks/useSiteData';
-import { api } from '@/lib/api';
-import { getSiteConfig } from '@/lib/data';
 
 gsap.registerPlugin(ScrollTrigger);
 
-export default function HeroSection() {
-  const { data: config } = useSiteData(
-    () => api.getSiteConfig(),
-    { initialData: getSiteConfig() }
-  );
-
+export function HeroSection() {
   const sectionRef = useRef<HTMLElement>(null);
   const imageRef = useRef<HTMLDivElement>(null);
   const titleRef = useRef<HTMLHeadingElement>(null);
@@ -48,7 +40,7 @@ export default function HeroSection() {
         ease: 'power2.out',
       });
 
-      // Title character reveal — staggered from center
+      // Title character reveal - staggered from center
       const chars = title.querySelectorAll('.char');
       tl.to(
         chars,
@@ -128,7 +120,7 @@ export default function HeroSection() {
     return () => ctx.revert();
   }, []);
 
-  // Split title into character spans for reveal animation
+  // Split title into character spans
   const titleText = '儒';
   const chars = titleText.split('').map((char, i) => (
     <span key={i} className="char inline-block" style={{ opacity: 0 }}>
@@ -149,7 +141,7 @@ export default function HeroSection() {
       >
         <img
           src="/assets/hero-still-life.jpg"
-          alt="毛笔、砚台、宣纸与几何直尺的静物摄影"
+          alt="毛笔、砚台、宣纸与几何直尺的静物摄影，展现传统与现代美学的交融"
           className="w-full h-full object-cover"
           loading="eager"
         />
@@ -176,10 +168,10 @@ export default function HeroSection() {
         >
           儒家文化创意工作室
           <span className="mx-3 text-stone/30">|</span>
-          {config?.brandNameEn || 'RU STUDIO'}
+          RU STUDIO
         </div>
 
-        {/* Main title with character reveal */}
+        {/* Main title */}
         <h1
           ref={titleRef}
           className="font-serif text-display-xl text-mist mb-6 perspective-800"
@@ -194,7 +186,7 @@ export default function HeroSection() {
           className="text-body-l text-mist/80 max-w-lg text-center leading-relaxed tracking-body font-serif"
           style={{ textShadow: '0 2px 15px rgba(0,0,0,0.5)' }}
         >
-          {config?.tagline || '向历史借灵感，为当代造美物'}
+          向历史借灵感，为当代造美物
         </p>
       </div>
 

@@ -5,7 +5,7 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        // Confucian palette — migrated from design system v2.0
+        // Confucian palette
         ink: {
           DEFAULT: '#0A0A0A',
           light: '#1A1A1A',
@@ -16,12 +16,11 @@ module.exports = {
           dark: '#D5CFC6',
         },
         mist: '#F5F2EB',
-        stone: '#8A8580',            // ⚠️ changed from #2C2C2C → now muted text color
+        stone: '#8A8580',
         cinnabar: {
           DEFAULT: '#8B1A1A',
           light: '#A62D2D',
         },
-        indigo: '#3B4D63',
         gold: '#9C8458',
         // shadcn overrides
         border: "hsl(var(--border))",

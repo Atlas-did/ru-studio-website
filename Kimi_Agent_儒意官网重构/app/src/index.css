@@ -4,7 +4,7 @@
 
 @layer base {
   :root {
-    /* Confucian Color System v2.0 */
+    /* Confucian Color System */
     --color-ink: #0A0A0A;
     --color-ink-light: #1A1A1A;
     --color-ink-lighter: #2C2C2C;
@@ -15,7 +15,6 @@
     --color-cinnabar: #8B1A1A;
     --color-cinnabar-light: #A62D2D;
     --color-gold: #9C8458;
-    --color-indigo: #3B4D63;
 
     /* Text colors */
     --color-text-primary: #F5F2EB;
@@ -25,12 +24,6 @@
     /* Borders */
     --color-border-subtle: rgba(245, 242, 235, 0.08);
     --color-border-medium: rgba(245, 242, 235, 0.15);
-
-    /* Easing curves */
-    --ease-expo-out: cubic-bezier(0.16, 1, 0.3, 1);
-    --ease-expo-in: cubic-bezier(0.7, 0, 0.84, 0);
-    --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
-    --ease-dramatic: cubic-bezier(0.87, 0, 0.13, 1);
 
     /* shadcn overrides */
     --background: 0 0% 4%;
@@ -53,6 +46,12 @@
     --input: 0 0% 15%;
     --ring: 0 72% 31%;
     --radius: 0px;
+
+    /* Easing */
+    --ease-expo-out: cubic-bezier(0.16, 1, 0.3, 1);
+    --ease-expo-in: cubic-bezier(0.7, 0, 0.84, 0);
+    --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+    --ease-dramatic: cubic-bezier(0.87, 0, 0.13, 1);
   }
 
   html {
@@ -71,24 +70,34 @@
     text-rendering: optimizeLegibility;
   }
 
+  /* Selection */
   ::selection {
     background-color: var(--color-cinnabar);
     color: var(--color-mist);
   }
 
-  /* ─── Scrollbar ─── */
-  ::-webkit-scrollbar { width: 4px; }
-  ::-webkit-scrollbar-track { background: var(--color-ink); }
-  ::-webkit-scrollbar-thumb { background: var(--color-ink-lighter); border-radius: 2px; }
-  ::-webkit-scrollbar-thumb:hover { background: var(--color-stone); }
+  /* Scrollbar */
+  ::-webkit-scrollbar {
+    width: 4px;
+  }
+  ::-webkit-scrollbar-track {
+    background: var(--color-ink);
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--color-ink-lighter);
+    border-radius: 2px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--color-stone);
+  }
 
-  /* ─── Focus states ─── */
+  /* Focus states */
   *:focus-visible {
     outline: 1px solid var(--color-cinnabar);
     outline-offset: 2px;
   }
 
-  /* Hide default cursor on desktop when custom cursor enabled */
+  /* Hide default cursor on desktop */
   @media (hover: hover) and (pointer: fine) {
     body.custom-cursor-enabled,
     body.custom-cursor-enabled * {
@@ -98,7 +107,7 @@
 }
 
 @layer components {
-  /* ─── Paper grain overlay ─── */
+  /* Paper grain overlay - applied globally */
   .paper-grain::before {
     content: '';
     position: fixed;
@@ -111,7 +120,7 @@
     background-size: 256px 256px;
   }
 
-  /* ─── Noise overlay for images ─── */
+  /* Noise overlay for images */
   .noise-overlay::after {
     content: '';
     position: absolute;
@@ -121,7 +130,18 @@
     background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
   }
 
-  /* ─── Section label (overline style) ─── */
+  /* Ink wash transition gradient */
+  .ink-wash-gradient {
+    background: linear-gradient(
+      to bottom,
+      var(--color-ink) 0%,
+      var(--color-ink-light) 40%,
+      var(--color-ink-lighter) 70%,
+      var(--color-paper) 100%
+    );
+  }
+
+  /* Section label style (overline) */
   .section-label {
     font-family: 'Inter', -apple-system, sans-serif;
     font-size: 10px;
@@ -131,7 +151,7 @@
     color: var(--color-stone);
   }
 
-  /* ─── Brush underline effect ─── */
+  /* Brush stroke underline effect */
   .brush-underline {
     position: relative;
     display: inline-block;
@@ -152,7 +172,7 @@
     transform: scaleX(1);
   }
 
-  /* ─── Glassmorphism header ─── */
+  /* Glassmorphism header */
   .glass-header {
     background: rgba(10, 10, 10, 0.7);
     backdrop-filter: blur(12px) saturate(180%);
@@ -160,7 +180,24 @@
     border-bottom: 1px solid var(--color-border-subtle);
   }
 
-  /* ─── Card hover lift effect ─── */
+  /* Magnetic button hover area */
+  .magnetic-area {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Image lazy load blur-up */
+  .img-blur-up {
+    filter: blur(20px);
+    transition: filter 0.5s ease-out;
+  }
+  .img-blur-up.loaded {
+    filter: blur(0);
+  }
+
+  /* Card hover lift effect */
   .card-lift {
     transition: transform 0.5s var(--ease-expo-out), box-shadow 0.5s var(--ease-expo-out);
   }
@@ -169,7 +206,7 @@
     box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
   }
 
-  /* ─── Horizontal rule — ink style ─── */
+  /* Horizontal rule - ink style */
   .hr-ink {
     border: none;
     height: 1px;
@@ -184,9 +221,12 @@
 }
 
 @layer utilities {
-  .text-balance { text-wrap: balance; }
+  /* Text balance */
+  .text-balance {
+    text-wrap: balance;
+  }
 
-  /* ─── Type Scale Utilities (11-level) ─── */
+  /* Type scale utilities */
   .text-display-xl {
     font-size: clamp(64px, 8vw, 120px);
     line-height: 1.0;
@@ -246,9 +286,21 @@
     text-transform: uppercase;
   }
 
-  /* ─── 3D perspective utilities ─── */
-  .perspective-800 { perspective: 800px; }
-  .perspective-1200 { perspective: 1200px; }
-  .preserve-3d { transform-style: preserve-3d; }
-  .will-change-transform { will-change: transform; }
+  /* Perspective for 3D effects */
+  .perspective-800 {
+    perspective: 800px;
+  }
+  .perspective-1200 {
+    perspective: 1200px;
+  }
+
+  /* Preserve 3D */
+  .preserve-3d {
+    transform-style: preserve-3d;
+  }
+
+  /* Will change for performance */
+  .will-change-transform {
+    will-change: transform;
+  }
 }

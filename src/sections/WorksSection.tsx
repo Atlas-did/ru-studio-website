@@ -14,7 +14,7 @@ export default function WorksSection() {
   const ref = useScrollReveal<HTMLElement>({ stagger: 0.15, childSelector: '.work-card' });
 
   return (
-    <section ref={ref} className="bg-stone py-24 md:py-40 px-6 md:px-12">
+    <section ref={ref} className="bg-ink-lighter py-24 md:py-40 px-6 md:px-12">
       <div className="max-w-[1440px] mx-auto">
         {/* Section Title */}
         <h2 className="font-display text-[clamp(28px,3.5vw,42px)] font-normal text-mist tracking-wide mb-16 md:mb-24">

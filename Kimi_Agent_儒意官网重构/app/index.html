@@ -29,15 +29,22 @@
         -moz-osx-font-smoothing: grayscale;
         overflow-x: hidden;
       }
+      /* Hide content until fonts load */
+      .fonts-loading body { visibility: hidden; }
+      .fonts-loaded body { visibility: visible; }
     </style>
 
     <script>
+      // Font loading detection
       document.documentElement.classList.add('fonts-loading');
       if (document.fonts) {
         document.fonts.ready.then(function() {
           document.documentElement.classList.remove('fonts-loading');
           document.documentElement.classList.add('fonts-loaded');
         });
+      } else {
+        document.documentElement.classList.remove('fonts-loading');
+        document.documentElement.classList.add('fonts-loaded');
       }
     </script>
   </head>
