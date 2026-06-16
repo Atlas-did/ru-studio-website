@@ -195,12 +195,18 @@ function seedData() {
     insertAbout.run('roadmap', '发展规划', '短期 1-2 年\n完善核心产品矩阵，打造3-5款年度爆款，实现年营收突破80万元。\n\n中期 3-5 年\n建立儒家文创设计标准体系，开展IP授权业务，拓展省外合作渠道。\n\n长期 5-10 年\n推动文创产品成为儒学海外传播载体，构建国际化文化品牌。', 3);
   }
 
-  // Seed default admin (username: admin, password: admin123)
+  // Seed default admin: create only when explicitly allowed via env
   const adminCount = db.prepare('SELECT COUNT(*) as count FROM admins').get();
   if (adminCount.count === 0) {
-    const hash = bcrypt.hashSync('admin123', 10);
-    db.prepare('INSERT INTO admins (username, password_hash) VALUES (?, ?)').run('admin', hash);
-    console.log('Default admin created: username=admin, password=admin123');
+    const createDefault = process.env.CREATE_DEFAULT_ADMIN === 'true';
+    const defaultPassword = process.env.DEFAULT_ADMIN_PASSWORD;
+    if (createDefault && defaultPassword) {
+      const hash = bcrypt.hashSync(defaultPassword, 10);
+      db.prepare('INSERT INTO admins (username, password_hash) VALUES (?, ?)').run('admin', hash);
+      console.log('Default admin created: username=admin (password from DEFAULT_ADMIN_PASSWORD)');
+    } else {
+      console.warn('No admin user exists. To create a default admin set CREATE_DEFAULT_ADMIN=true and DEFAULT_ADMIN_PASSWORD in env.');
+    }
   }
 }
 

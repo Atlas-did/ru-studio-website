@@ -1,5 +1,11 @@
 import jwt from 'jsonwebtoken';
 
+// In production require JWT_SECRET to be set
+if (process.env.NODE_ENV === 'production' && !process.env.JWT_SECRET) {
+  console.error('FATAL: JWT_SECRET must be set in production environment');
+  process.exit(1);
+}
+
 const JWT_SECRET = process.env.JWT_SECRET || 'rustudio-admin-secret-change-in-production';
 
 function generateToken(payload) {
