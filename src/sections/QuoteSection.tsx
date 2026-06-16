@@ -1,44 +1,70 @@
-import { useScrollReveal } from '@/hooks/useScrollReveal';
+import { useEffect, useRef } from 'react';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+gsap.registerPlugin(ScrollTrigger);
 
 export default function QuoteSection() {
-  const ref = useScrollReveal<HTMLElement>();
+  const sectionRef = useRef<HTMLElement>(null);
+  const textRef = useRef<HTMLQuoteElement>(null);
+  const attrRef = useRef<HTMLParagraphElement>(null);
+  const lineLeftRef = useRef<HTMLDivElement>(null);
+  const lineRightRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const section = sectionRef.current;
+    const text = textRef.current;
+    const attr = attrRef.current;
+    const lineLeft = lineLeftRef.current;
+    const lineRight = lineRightRef.current;
+    if (!section || !text || !attr || !lineLeft || !lineRight) return;
+
+    const ctx = gsap.context(() => {
+      gsap.set(text, { opacity: 0, y: 30 });
+      gsap.set(attr, { opacity: 0, y: 15 });
+      gsap.set(lineLeft, { scaleX: 0, transformOrigin: 'right' });
+      gsap.set(lineRight, { scaleX: 0, transformOrigin: 'left' });
+
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: section,
+          start: 'top 70%',
+          toggleActions: 'play none none none',
+        },
+      });
+
+      tl.to(lineLeft, { scaleX: 1, duration: 0.8, ease: 'power3.out' }, 0);
+      tl.to(lineRight, { scaleX: 1, duration: 0.8, ease: 'power3.out' }, 0);
+      tl.to(text, { opacity: 1, y: 0, duration: 1.0, ease: 'power3.out' }, 0.2);
+      tl.to(attr, { opacity: 1, y: 0, duration: 0.6, ease: 'power3.out' }, 0.5);
+    }, section);
+
+    return () => ctx.revert();
+  }, []);
 
   return (
     <section
-      ref={ref}
-      className="bg-paper py-24 md:py-40 px-6 md:px-12"
+      ref={sectionRef}
+      className="relative bg-ink py-24 md:py-40 overflow-hidden"
     >
-      <div className="max-w-[1440px] mx-auto grid grid-cols-1 md:grid-cols-5 gap-12 md:gap-16 items-center">
-        {/* Left: Quote */}
-        <div className="md:col-span-2">
-          <blockquote className="font-serif text-[clamp(24px,3vw,36px)] font-normal text-ink leading-[1.8] tracking-wide">
-            向历史借灵感，
-            <br />
-            为当代造美物。
-          </blockquote>
-          <p className="mt-8 font-sans text-[11px] tracking-[0.15em] text-text-secondary uppercase">
-            Confucian Culture Creative Studio
-          </p>
-        </div>
+      {/* Decorative vertical lines */}
+      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+        <div ref={lineLeftRef} className="absolute left-6 md:left-16 lg:left-24 top-1/4 bottom-1/4 w-px bg-[rgba(245,242,235,0.08)]" />
+        <div ref={lineRightRef} className="absolute right-6 md:right-16 lg:right-24 top-1/4 bottom-1/4 w-px bg-[rgba(245,242,235,0.08)]" />
+      </div>
 
-        {/* Right: Image */}
-        <div className="md:col-span-3">
-          <div className="relative aspect-[4/5] max-w-lg ml-auto overflow-hidden">
-            <img
-              src="/assets/hero-still-life.jpg"
-              alt="毛笔、砚台、宣纸与几何直尺的静物摄影"
-              className="w-full h-full object-cover"
-              loading="lazy"
-            />
-            {/* Subtle grain overlay */}
-            <div
-              className="absolute inset-0 pointer-events-none opacity-[0.03]"
-              style={{
-                backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")`,
-              }}
-            />
-          </div>
-        </div>
+      <div className="max-w-4xl mx-auto px-8 md:px-16 relative z-10">
+        <blockquote ref={textRef} className="text-center">
+          <p
+            className="font-serif text-display-m text-mist leading-relaxed tracking-heading"
+            style={{ textWrap: 'balance' }}
+          >
+            "以古为新，借古开今"
+          </p>
+        </blockquote>
+        <p ref={attrRef} className="text-caption text-stone mt-6 text-center tracking-caption">
+          设计理念 / DESIGN PHILOSOPHY
+        </p>
       </div>
     </section>
   );
