@@ -1,100 +1,144 @@
-import { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { useEffect, useRef, useState } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import gsap from 'gsap';
 import { isAuthenticated } from '@/lib/admin-api';
 
 const navItems = [
-  { label: 'ABOUT', to: '/about' },
-  { label: 'COLLECTION', to: '/collection' },
-  { label: 'JOURNAL', to: '/journal' },
-  { label: 'COOPERATION', to: '/cooperation' },
+  { label: '首页', labelEn: 'HOME', path: '/' },
+  { label: '作品', labelEn: 'COLLECTION', path: '/collection' },
+  { label: '日志', labelEn: 'JOURNAL', path: '/journal' },
+  { label: '合作', labelEn: 'COOPERATION', path: '/cooperation' },
+  { label: '关于', labelEn: 'ABOUT', path: '/about' },
 ];
 
 export default function Header() {
+  const location = useLocation();
+  const navigate = useNavigate();
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
-  const location = useLocation();
+  const headerRef = useRef<HTMLElement>(null);
+  const navRef = useRef<HTMLDivElement>(null);
+  const underlineRef = useRef<HTMLDivElement>(null);
+  const linkRefs = useRef<(HTMLAnchorElement | null)[]>([]);
+
+  const isHome = location.pathname === '/';
 
   useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 50);
+    const onScroll = () => {
+      setScrolled(window.scrollY > 80);
     };
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
+  // Animate underline on route change
   useEffect(() => {
+    const activeIndex = navItems.findIndex((item) => item.path === location.pathname);
+    const activeLink = linkRefs.current[activeIndex];
+    if (activeLink && underlineRef.current && navRef.current) {
+      const navRect = navRef.current.getBoundingClientRect();
+      const linkRect = activeLink.getBoundingClientRect();
+      gsap.to(underlineRef.current, {
+        x: linkRect.left - navRect.left,
+        width: linkRect.width,
+        opacity: 1,
+        duration: 0.4,
+        ease: 'power3.out',
+      });
+    } else if (underlineRef.current) {
+      gsap.to(underlineRef.current, { opacity: 0, duration: 0.2 });
+    }
     setMenuOpen(false);
-  }, [location]);
+  }, [location.pathname]);
+
+  const handleNavClick = (e: React.MouseEvent, path: string) => {
+    e.preventDefault();
+    if (location.pathname === path) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else {
+      navigate(path);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
 
   return (
     <header
-      className={`fixed top-0 left-0 w-full z-50 transition-all duration-500 ${
-        scrolled
-          ? 'bg-ink/80 backdrop-blur-md'
+      ref={headerRef}
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
+        scrolled || !isHome
+          ? 'glass-header'
           : 'bg-transparent'
       }`}
+      style={{ transitionTimingFunction: 'cubic-bezier(0.16, 1, 0.3, 1)' }}
     >
-      <div className="max-w-[1440px] mx-auto flex items-center justify-between px-6 md:px-12 h-16 md:h-20">
+      <div className="max-w-[1440px] mx-auto flex items-center justify-between h-16 md:h-20 px-6 md:px-12 lg:px-16">
         {/* Logo */}
         <Link
           to="/"
-          className="font-display text-xl md:text-2xl tracking-wide text-mist hover:text-cinnabar transition-colors duration-300"
+          onClick={(e) => handleNavClick(e, '/')}
+          className="flex items-baseline gap-3 group relative z-10"
         >
-          儒
+          <span className="font-serif text-lg md:text-xl font-medium text-mist tracking-heading">
+            儒意
+          </span>
+          <span
+            className="text-overline text-stone group-hover:text-mist transition-colors duration-300 hidden md:inline"
+          >
+            RU STUDIO
+          </span>
         </Link>
 
-        {/* Desktop Nav */}
-        <nav className="hidden md:flex items-center gap-10">
-          {navItems.map((item) => (
-            <Link
-              key={item.to}
-              to={item.to}
-              className="font-sans text-[11px] tracking-[0.15em] text-mist/70 hover:text-cinnabar transition-colors duration-300 uppercase"
+        {/* Desktop Navigation */}
+        <nav ref={navRef} className="hidden md:flex items-center gap-8 relative">
+          {navItems.map((item, i) => (
+            <a
+              key={item.path}
+              href={item.path}
+              ref={(el) => { linkRefs.current[i] = el; }}
+              onClick={(e) => handleNavClick(e, item.path)}
+              className={`relative py-2 text-overline transition-colors duration-300 ${
+                location.pathname === item.path
+                  ? 'text-mist'
+                  : 'text-stone hover:text-mist'
+              }`}
             >
-              {item.label}
-            </Link>
+              <span className="sr-only">{item.label}</span>
+              <span aria-hidden="true">{item.labelEn}</span>
+            </a>
           ))}
-        </nav>
+          {/* Animated underline */}
+          <div
+            ref={underlineRef}
+            className="absolute bottom-0 left-0 h-px bg-cinnabar opacity-0"
+            style={{ width: 0, transition: 'none' }}
+          />
 
-        {/* Admin link — only shown when logged in */}
-        <div className="hidden md:flex items-center gap-6">
-          {isAuthenticated() ? (
+          {/* Admin link */}
+          {isAuthenticated() && (
             <Link
               to="/admin"
-              className="font-sans text-[11px] tracking-[0.1em] text-text-secondary/50 hover:text-cinnabar transition-colors duration-300 uppercase"
-              title="Admin Panel"
+              className="relative py-2 text-overline text-stone/40 hover:text-cinnabar transition-colors duration-300"
+              title="管理后台"
             >
               ◆
             </Link>
-          ) : null}
-          {/* Contact Button - Desktop */}
-          <Link
-            to="/cooperation"
-            className="font-sans text-[11px] tracking-[0.1em] text-mist border border-mist px-4 py-2 hover:bg-cinnabar hover:border-cinnabar hover:text-mist transition-all duration-300 uppercase"
-          >
-            CONTACT
-          </Link>
-        </div>
+          )}
+        </nav>
 
         {/* Mobile Menu Button */}
         <button
           onClick={() => setMenuOpen(!menuOpen)}
-          className="md:hidden flex flex-col gap-1.5 p-2"
+          className="md:hidden relative z-10 w-8 h-8 flex flex-col items-center justify-center gap-1.5"
           aria-label="Toggle menu"
         >
           <span
-            className={`block w-5 h-px bg-mist transition-transform duration-300 ${
-              menuOpen ? 'rotate-45 translate-y-[3.5px]' : ''
+            className={`block w-5 h-px bg-mist transition-all duration-300 ${
+              menuOpen ? 'rotate-45 translate-y-1' : ''
             }`}
           />
           <span
-            className={`block w-5 h-px bg-mist transition-opacity duration-300 ${
-              menuOpen ? 'opacity-0' : ''
-            }`}
-          />
-          <span
-            className={`block w-5 h-px bg-mist transition-transform duration-300 ${
-              menuOpen ? '-rotate-45 -translate-y-[3.5px]' : ''
+            className={`block w-5 h-px bg-mist transition-all duration-300 ${
+              menuOpen ? '-rotate-45 -translate-y-0.5' : ''
             }`}
           />
         </button>
@@ -102,26 +146,33 @@ export default function Header() {
 
       {/* Mobile Menu */}
       <div
-        className={`md:hidden absolute top-full left-0 w-full bg-ink/95 backdrop-blur-md overflow-hidden transition-all duration-500 ${
-          menuOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
+        className={`md:hidden fixed inset-0 bg-ink/95 backdrop-blur-xl z-40 transition-all duration-500 flex flex-col items-center justify-center ${
+          menuOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
         }`}
+        style={{ transitionTimingFunction: 'cubic-bezier(0.16, 1, 0.3, 1)' }}
       >
-        <nav className="flex flex-col px-6 py-6 gap-4">
+        <nav className="flex flex-col items-center gap-8">
           {navItems.map((item) => (
-            <Link
-              key={item.to}
-              to={item.to}
-              className="font-sans text-xs tracking-[0.15em] text-mist/70 hover:text-cinnabar transition-colors duration-300 uppercase"
+            <a
+              key={item.path}
+              href={item.path}
+              onClick={(e) => handleNavClick(e, item.path)}
+              className={`text-display-m font-serif transition-colors duration-300 ${
+                location.pathname === item.path ? 'text-mist' : 'text-stone hover:text-mist'
+              }`}
             >
               {item.label}
-            </Link>
+            </a>
           ))}
-          <Link
-            to="/cooperation"
-            className="font-sans text-xs tracking-[0.1em] text-mist border border-mist px-4 py-2 text-center hover:bg-cinnabar hover:border-cinnabar transition-all duration-300 uppercase mt-2"
-          >
-            CONTACT
-          </Link>
+          {isAuthenticated() && (
+            <Link
+              to="/admin"
+              onClick={() => setMenuOpen(false)}
+              className="text-overline text-stone/40 hover:text-cinnabar transition-colors"
+            >
+              ADMIN PANEL
+            </Link>
+          )}
         </nav>
       </div>
     </header>

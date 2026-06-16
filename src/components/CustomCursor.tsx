@@ -1,105 +1,138 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import gsap from 'gsap';
 
-/**
- * Styled cursor dot that follows the mouse.
- * Scales up on interactive elements. Hidden on touch devices.
- */
+type CursorState = 'default' | 'hover' | 'view' | 'drag';
+
 export default function CustomCursor() {
   const cursorRef = useRef<HTMLDivElement>(null);
-  const dotRef = useRef<HTMLDivElement>(null);
+  const cursorDotRef = useRef<HTMLDivElement>(null);
+  const [cursorState, setCursorState] = useState<CursorState>('default');
+  const [isTouch, setIsTouch] = useState(false);
 
   useEffect(() => {
-    // Skip on touch devices
-    if ('ontouchstart' in window) return;
+    // Detect touch device
+    const checkTouch = () => {
+      setIsTouch(window.matchMedia('(hover: none)').matches);
+    };
+    checkTouch();
+    window.addEventListener('resize', checkTouch);
+
+    if (window.matchMedia('(hover: none)').matches) return;
+
+    // Enable custom cursor
+    document.body.classList.add('custom-cursor-enabled');
 
     const cursor = cursorRef.current;
-    const dot = dotRef.current;
+    const dot = cursorDotRef.current;
     if (!cursor || !dot) return;
 
-    let mouseX = 0;
-    let mouseY = 0;
-    let cursorX = 0;
-    let cursorY = 0;
-
     const onMouseMove = (e: MouseEvent) => {
-      mouseX = e.clientX;
-      mouseY = e.clientY;
+      gsap.to(cursor, {
+        x: e.clientX,
+        y: e.clientY,
+        duration: 0.08,
+        ease: 'power2.out',
+      });
+      gsap.to(dot, {
+        x: e.clientX,
+        y: e.clientY,
+        duration: 0.02,
+        ease: 'none',
+      });
     };
 
+    // Detect hover targets
     const onMouseOver = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
-      if (
-        target.tagName === 'A' ||
-        target.tagName === 'BUTTON' ||
-        target.closest('a') ||
-        target.closest('button') ||
-        target.closest('[data-cursor-hover]')
-      ) {
-        cursor.style.width = '40px';
-        cursor.style.height = '40px';
-        cursor.style.borderColor = 'rgba(139, 26, 26, 0.8)';
+      if (!target) return;
+
+      if (target.closest('a, button, [role="button"]')) {
+        setCursorState('hover');
+      } else if (target.closest('[data-cursor="view"]')) {
+        setCursorState('view');
+      } else if (target.closest('[data-cursor="drag"]')) {
+        setCursorState('drag');
+      } else {
+        setCursorState('default');
       }
     };
 
-    const onMouseOut = () => {
-      cursor.style.width = '24px';
-      cursor.style.height = '24px';
-      cursor.style.borderColor = 'rgba(139, 26, 26, 0.3)';
+    const onMouseDown = () => {
+      gsap.to(cursor, { scale: 0.85, duration: 0.1, ease: 'power2.out' });
     };
 
-    const animate = () => {
-      // Smooth follow
-      cursorX += (mouseX - cursorX) * 0.15;
-      cursorY += (mouseY - cursorY) * 0.15;
-
-      cursor.style.left = `${cursorX}px`;
-      cursor.style.top = `${cursorY}px`;
-      dot.style.left = `${mouseX}px`;
-      dot.style.top = `${mouseY}px`;
-
-      requestAnimationFrame(animate);
+    const onMouseUp = () => {
+      gsap.to(cursor, { scale: 1, duration: 0.15, ease: 'power2.out' });
     };
 
-    document.addEventListener('mousemove', onMouseMove, { passive: true });
-    document.addEventListener('mouseover', onMouseOver, { passive: true });
-    document.addEventListener('mouseout', onMouseOut, { passive: true });
-    const animId = requestAnimationFrame(animate);
+    window.addEventListener('mousemove', onMouseMove);
+    window.addEventListener('mouseover', onMouseOver);
+    window.addEventListener('mousedown', onMouseDown);
+    window.addEventListener('mouseup', onMouseUp);
 
     return () => {
-      document.removeEventListener('mousemove', onMouseMove);
-      document.removeEventListener('mouseover', onMouseOver);
-      document.removeEventListener('mouseout', onMouseOut);
-      cancelAnimationFrame(animId);
+      document.body.classList.remove('custom-cursor-enabled');
+      window.removeEventListener('mousemove', onMouseMove);
+      window.removeEventListener('mouseover', onMouseOver);
+      window.removeEventListener('mousedown', onMouseDown);
+      window.removeEventListener('mouseup', onMouseUp);
+      window.removeEventListener('resize', checkTouch);
     };
   }, []);
 
+  // Animate cursor state changes
+  useEffect(() => {
+    const cursor = cursorRef.current;
+    if (!cursor) return;
+
+    const sizes: Record<CursorState, number> = {
+      default: 12,
+      hover: 48,
+      view: 72,
+      drag: 56,
+    };
+
+    gsap.to(cursor, {
+      width: sizes[cursorState],
+      height: sizes[cursorState],
+      duration: 0.3,
+      ease: 'power3.out',
+    });
+  }, [cursorState]);
+
+  if (isTouch) return null;
+
   return (
     <>
-      {/* Outer ring (smooth follow) */}
+      {/* Outer ring */}
       <div
         ref={cursorRef}
-        className="hidden md:block fixed pointer-events-none z-[9999]"
-        style={{
-          width: '24px',
-          height: '24px',
-          border: '1px solid rgba(139, 26, 26, 0.3)',
-          borderRadius: '50%',
-          transform: 'translate(-50%, -50%)',
-          transition: 'width 0.2s ease, height 0.2s ease, border-color 0.2s ease',
-          willChange: 'left, top',
-        }}
-      />
-      {/* Inner dot (instant follow) */}
+        className={`fixed top-0 left-0 pointer-events-none z-[9997] -translate-x-1/2 -translate-y-1/2 rounded-full border transition-colors duration-200 ${
+          cursorState === 'default'
+            ? 'border-mist/50 bg-transparent'
+            : cursorState === 'hover'
+            ? 'border-mist/30 bg-mist/5'
+            : cursorState === 'view'
+            ? 'border-cinnabar/40 bg-cinnabar/10'
+            : 'border-gold/30 bg-gold/5'
+        }`}
+        style={{ width: 12, height: 12 }}
+      >
+        {cursorState === 'view' && (
+          <span className="absolute inset-0 flex items-center justify-center text-[10px] text-mist/70 font-sans">
+            查看
+          </span>
+        )}
+        {cursorState === 'drag' && (
+          <span className="absolute inset-0 flex items-center justify-center text-[10px] text-gold/70 font-sans">
+            拖拽
+          </span>
+        )}
+      </div>
+      {/* Center dot */}
       <div
-        ref={dotRef}
-        className="hidden md:block fixed pointer-events-none z-[9999]"
-        style={{
-          width: '4px',
-          height: '4px',
-          backgroundColor: '#8B1A1A',
-          borderRadius: '50%',
-          transform: 'translate(-50%, -50%)',
-        }}
+        ref={cursorDotRef}
+        className="fixed top-0 left-0 pointer-events-none z-[9997] w-0.5 h-0.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-mist"
       />
     </>
   );

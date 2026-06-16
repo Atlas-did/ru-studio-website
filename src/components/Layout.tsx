@@ -24,12 +24,20 @@ export default function Layout() {
     window.scrollTo(0, 0);
   }, [location.pathname]);
 
+  // Enable paper grain texture globally
+  useEffect(() => {
+    document.body.classList.add('paper-grain');
+    return () => {
+      document.body.classList.remove('paper-grain');
+    };
+  }, []);
+
   return (
-    <div className="min-h-screen bg-ink text-mist">
+    <div className="relative min-h-[100dvh]">
       <ScrollProgress />
-      <CustomCursor />
       <Header />
-      <main>
+      <CustomCursor />
+      <main className="relative">
         <Outlet />
       </main>
       <Footer />
