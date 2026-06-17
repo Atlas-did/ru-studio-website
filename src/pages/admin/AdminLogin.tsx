@@ -6,16 +6,20 @@ export default function AdminLogin() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  // Listen for GitHub OAuth callback message
+  // Poll for GitHub OAuth callback (localStorage relay from popup)
   useEffect(() => {
-    const handler = (e: MessageEvent) => {
-      if (e.data?.type === 'github-login') {
-        setAuth(e.data.token, e.data.username);
-        window.location.href = '/#/admin';
+    const interval = setInterval(() => {
+      if (localStorage.getItem('ru_admin_ready') === 'true') {
+        const token = localStorage.getItem('ru_admin_token');
+        const username = localStorage.getItem('ru_admin_username');
+        localStorage.removeItem('ru_admin_ready');
+        if (token && username) {
+          setAuth(token, username);
+          window.location.href = '/#/admin';
+        }
       }
-    };
-    window.addEventListener('message', handler);
-    return () => window.removeEventListener('message', handler);
+    }, 500);
+    return () => clearInterval(interval);
   }, []);
 
   const handlePasswordLogin = async (e: React.FormEvent) => {
