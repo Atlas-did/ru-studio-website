@@ -82,7 +82,7 @@ export default function CTASection() {
             className="group relative px-8 py-4 border border-mist/60 text-mist text-overline tracking-overline overflow-hidden transition-colors duration-500 hover:border-cinnabar hover:text-mist"
           >
             <span className="absolute inset-0 bg-cinnabar transform -translate-x-full group-hover:translate-x-0 transition-transform duration-500 ease-out" />
-            <span className="relative z-10">发起合作</span>
+            <span className="relative z-10">{(config as any)?.ctaButtonText || '定制儒意'}</span>
           </Link>
 
           <a

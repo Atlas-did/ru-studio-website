@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+﻿import { useEffect, useRef, useState } from 'react';
 
 type CursorState = 'default' | 'hover' | 'view' | 'drag';
 
@@ -17,20 +17,41 @@ export default function CustomCursor() {
     let lastX = -9999, lastY = -9999;
     const repaint = () => { dot.style.transform = `translate(${lastX - 4}px, ${lastY - 4}px)`; };
     const onMove = (e: MouseEvent) => { lastX = e.clientX; lastY = e.clientY; repaint(); };
-    // Re-sync on scroll/wheel so cursor doesn't lag behind content
-    const onScroll = () => repaint();
+
+    const deduceState = (t: Element): CursorState => {
+      if (t.closest('a, button, [role="button"]')) return 'hover';
+      if (t.closest('[data-cursor="view"]')) return 'view';
+      if (t.closest('[data-cursor="drag"]')) return 'drag';
+      return 'default';
+    };
 
     const onOver = (e: MouseEvent) => {
       const t = e.target as HTMLElement;
       if (!t) return;
-      if (t.closest('a, button, [role="button"]')) setCursorState('hover');
-      else if (t.closest('[data-cursor="view"]')) setCursorState('view');
-      else if (t.closest('[data-cursor="drag"]')) setCursorState('drag');
-      else setCursorState('default');
+      setCursorState(deduceState(t));
+    };
+
+    // mouseout: when leaving an element, re-check what is now under the cursor
+    const onOut = (e: MouseEvent) => {
+      const related = (e as any).relatedTarget as HTMLElement | null;
+      // relatedTarget is the element the mouse is moving TO (or null if leaving window)
+      if (!related || related === document.documentElement) {
+        setCursorState('default');
+        return;
+      }
+      setCursorState(deduceState(related));
+    };
+
+    // Re-sync on scroll/wheel: re-detect element under stationary mouse
+    const onScroll = () => {
+      repaint();
+      const el = document.elementFromPoint(lastX, lastY);
+      if (el) setCursorState(deduceState(el));
     };
 
     window.addEventListener('mousemove', onMove, { passive: true });
     window.addEventListener('mouseover', onOver, { passive: true });
+    window.addEventListener('mouseout', onOut, { passive: true });
     window.addEventListener('scroll', onScroll, { passive: true, capture: true });
     window.addEventListener('wheel', onScroll, { passive: true });
 
@@ -38,6 +59,7 @@ export default function CustomCursor() {
       document.body.classList.remove('custom-cursor-enabled');
       window.removeEventListener('mousemove', onMove);
       window.removeEventListener('mouseover', onOver);
+      window.removeEventListener('mouseout', onOut);
       window.removeEventListener('scroll', onScroll);
       window.removeEventListener('wheel', onScroll);
     };
@@ -55,7 +77,7 @@ export default function CustomCursor() {
       style={{
         position: 'fixed',
         top: 0, left: 0,
-        zIndex: 9997,
+        zIndex: 9999,
         width: `${size}px`, height: `${size}px`,
         borderRadius: '50%',
         border: cursorState === 'default' ? 'none' : '1px solid rgba(0,0,0,0.3)',

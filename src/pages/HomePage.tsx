@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import HeroSection from '@/sections/HeroSection';
 import QuoteSection from '@/sections/QuoteSection';
 import ConceptsSection from '@/sections/ConceptsSection';
@@ -19,6 +20,12 @@ export default function HomePage() {
       <SectionTransition from="#111111" to="#E8E4DC" height={100} />
       <QuoteSection />
       <SectionTransition from="#E8E4DC" to="#111111" height={100} />
+      {/* Sales entry */}
+      <div className="bg-ink py-6 text-center">
+        <Link to="/collection" className="inline-block text-overline text-cinnabar brush-underline hover:text-cinnabar-light transition-colors">
+          将此意带走 →
+        </Link>
+      </div>
       <TimelineSection />
       <SectionTransition from="#111111" to="#111111" height={60} />
       <ConceptsSection />

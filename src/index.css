@@ -1,4 +1,4 @@
-@tailwind base;
+﻿@tailwind base;
 @tailwind components;
 @tailwind utilities;
 
@@ -73,11 +73,8 @@
 
   /* Hide default cursor on desktop when custom cursor enabled */
   @media (hover: hover) and (pointer: fine) {
-    body.custom-cursor-enabled { cursor: none; }
-    body.custom-cursor-enabled a,
-    body.custom-cursor-enabled button,
-    body.custom-cursor-enabled [role="button"],
-    body.custom-cursor-enabled [data-cursor] { cursor: none; }
+    body.custom-cursor-enabled,
+    body.custom-cursor-enabled * { cursor: none !important; }
   }
 
   ::selection {
