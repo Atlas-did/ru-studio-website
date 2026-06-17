@@ -17,29 +17,6 @@
     <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>儒</text></svg>" />
 
-    <style>
-      /* Critical CSS to prevent FOUC */
-      html { background-color: #0A0A0A; }
-      body {
-        margin: 0;
-        background-color: #0A0A0A;
-        color: #F5F2EB;
-        font-family: 'Noto Serif SC', 'Songti SC', 'SimSun', serif;
-        -webkit-font-smoothing: antialiased;
-        -moz-osx-font-smoothing: grayscale;
-        overflow-x: hidden;
-      }
-    </style>
-
-    <script>
-      document.documentElement.classList.add('fonts-loading');
-      if (document.fonts) {
-        document.fonts.ready.then(function() {
-          document.documentElement.classList.remove('fonts-loading');
-          document.documentElement.classList.add('fonts-loaded');
-        });
-      }
-    </script>
   </head>
   <body>
     <div id="root"></div>

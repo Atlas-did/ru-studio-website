@@ -32,6 +32,7 @@ export default function DraggableGallery({
   const [activeIndex, setActiveIndex] = useState(0);
   const [cursorX, setCursorX] = useState<number | null>(null);
   const [showCursorHint, setShowCursorHint] = useState(true);
+  const [wheelLocked, setWheelLocked] = useState(false);
 
   // 计算当前激活项
   const updateActiveIndex = useCallback(() => {
@@ -49,6 +50,7 @@ export default function DraggableGallery({
     if (!container) return;
 
     const onWheel = (e: WheelEvent) => {
+      if (!wheelLocked) return;
       if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
         e.preventDefault();
         container.scrollLeft += e.deltaY;
@@ -58,7 +60,7 @@ export default function DraggableGallery({
 
     container.addEventListener('wheel', onWheel, { passive: false });
     return () => container.removeEventListener('wheel', onWheel);
-  }, [updateActiveIndex]);
+  }, [updateActiveIndex, wheelLocked]);
 
   // 鼠标拖拽
   const handleMouseDown = (e: React.MouseEvent) => {
@@ -202,8 +204,8 @@ export default function DraggableGallery({
 
       {/* 导航控制栏 */}
       <div className="flex items-center justify-between mt-6 px-1">
-        {/* 箭头按钮 */}
-        <div className="flex gap-3">
+        {/* 箭头按钮 + 锁定切换 */}
+        <div className="flex gap-3 items-center">
           <button
             onClick={goPrev}
             disabled={activeIndex === 0}
@@ -223,6 +225,17 @@ export default function DraggableGallery({
             <svg className="w-4 h-4 text-mist" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
             </svg>
+          </button>
+          <button
+            onClick={() => setWheelLocked(!wheelLocked)}
+            className={`text-caption-s font-sans px-2 py-1.5 border transition-all duration-300 ${
+              wheelLocked
+                ? 'text-cinnabar border-cinnabar/40 bg-cinnabar/10'
+                : 'text-stone/50 border-[rgba(245,242,235,0.08)] hover:text-stone hover:border-mist/20'
+            }`}
+            title={wheelLocked ? '已锁定：滚轮控制画廊' : '未锁定：滚轮控制页面'}
+          >
+            {wheelLocked ? '🔒 滚轮浏览' : '🔓 滚轮翻页'}
           </button>
         </div>
 

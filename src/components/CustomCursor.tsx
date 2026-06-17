@@ -58,10 +58,10 @@ export default function CustomCursor() {
         zIndex: 9997,
         width: `${size}px`, height: `${size}px`,
         borderRadius: '50%',
-        border: cursorState === 'default' ? 'none' : '1px solid rgba(255,255,255,0.4)',
-        backgroundColor: cursorState === 'default' ? '#fff' : 'transparent',
+        border: cursorState === 'default' ? 'none' : '1px solid rgba(0,0,0,0.3)',
+        backgroundColor: cursorState === 'default' ? '#fff' : 'rgba(255,255,255,0.15)',
+        boxShadow: cursorState === 'default' ? '0 0 0 1px rgba(0,0,0,0.3)' : '0 0 0 1px rgba(0,0,0,0.15)',
         transition: 'width 0.2s ease, height 0.2s ease, border 0.2s ease, background-color 0.2s ease',
-        mixBlendMode: 'difference',
         display: 'flex', alignItems: 'center', justifyContent: 'center',
       }}
     >

@@ -1,4 +1,4 @@
-import { useRef, useState, type ReactNode } from 'react';
+﻿import { useRef, useCallback, type ReactNode } from 'react';
 
 interface TiltCardProps {
   children: ReactNode;
@@ -11,7 +11,7 @@ interface TiltCardProps {
 
 /**
  * Card with 3D perspective tilt on hover.
- * Wraps children with mouse-based rotateX/Y transform.
+ * Uses direct DOM manipulation to avoid React re-renders on every mousemove.
  */
 export default function TiltCard({
   children,
@@ -20,12 +20,9 @@ export default function TiltCard({
   scale = 1.02,
 }: TiltCardProps) {
   const ref = useRef<HTMLDivElement>(null);
-  const [style, setStyle] = useState<React.CSSProperties>({
-    transform: 'perspective(800px) rotateX(0deg) rotateY(0deg) scale(1)',
-    transition: 'transform 0.3s ease-out',
-  });
 
-  const handleMouseMove = (e: React.MouseEvent) => {
+  // Direct DOM manipulation 鈥?no setState = no re-render per frame
+  const handleMouseMove = useCallback((e: React.MouseEvent) => {
     const el = ref.current;
     if (!el) return;
 
@@ -36,24 +33,25 @@ export default function TiltCard({
     const rotateY = (x - 0.5) * maxTilt * 2;
     const rotateX = (0.5 - y) * maxTilt * 2;
 
-    setStyle({
-      transform: `perspective(800px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(${scale})`,
-      transition: 'transform 0.1s ease-out',
-    });
-  };
+    el.style.transform = `perspective(800px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(${scale})`;
+    el.style.transition = 'transform 0.1s ease-out';
+  }, [maxTilt, scale]);
 
-  const handleMouseLeave = () => {
-    setStyle({
-      transform: 'perspective(800px) rotateX(0deg) rotateY(0deg) scale(1)',
-      transition: 'transform 0.5s ease-out',
-    });
-  };
+  const handleMouseLeave = useCallback(() => {
+    const el = ref.current;
+    if (!el) return;
+    el.style.transform = 'perspective(800px) rotateX(0deg) rotateY(0deg) scale(1)';
+    el.style.transition = 'transform 0.5s ease-out';
+  }, []);
 
   return (
     <div
       ref={ref}
       className={className}
-      style={style}
+      style={{
+        transform: 'perspective(800px) rotateX(0deg) rotateY(0deg) scale(1)',
+        transition: 'transform 0.3s ease-out',
+      }}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
     >

@@ -14,7 +14,6 @@ const navItems = [
 export default function Header() {
   const location = useLocation();
   const navigate = useNavigate();
-  const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const headerRef = useRef<HTMLElement>(null);
   const navRef = useRef<HTMLDivElement>(null);
@@ -24,12 +23,22 @@ export default function Header() {
   const isHome = location.pathname === '/';
 
   useEffect(() => {
+    const header = headerRef.current;
+    let rafId = 0;
     const onScroll = () => {
-      setScrolled(window.scrollY > 80);
+      if (rafId) return;
+      rafId = requestAnimationFrame(() => {
+        if (header) {
+          const s = window.scrollY > 80;
+          header.classList.toggle('glass-header', s || !isHome);
+          header.classList.toggle('bg-transparent', !s && isHome);
+        }
+        rafId = 0;
+      });
     };
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
-  }, []);
+  }, [isHome]);
 
   // Animate underline on route change
   useEffect(() => {
@@ -64,11 +73,7 @@ export default function Header() {
   return (
     <header
       ref={headerRef}
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-        scrolled || !isHome
-          ? 'glass-header'
-          : 'bg-transparent'
-      }`}
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 bg-transparent`}
       style={{ transitionTimingFunction: 'cubic-bezier(0.16, 1, 0.3, 1)' }}
     >
       <div className="max-w-[1440px] mx-auto flex items-center justify-between h-16 md:h-20 px-6 md:px-12 lg:px-16">
