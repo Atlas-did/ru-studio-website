@@ -3,6 +3,7 @@ import { Outlet, useLocation } from 'react-router-dom';
 import { initLenis, destroyLenis } from '@/hooks/useLenis';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import ScrollProgress from './ScrollProgress';
+import CustomCursor from './CustomCursor';
 import Header from './Header';
 import Footer from './Footer';
 
@@ -35,6 +36,7 @@ export default function Layout() {
     <div className="relative min-h-[100dvh]">
       <ScrollProgress />
       <Header />
+      <CustomCursor />
       <main className="relative">
         <Outlet />
       </main>
