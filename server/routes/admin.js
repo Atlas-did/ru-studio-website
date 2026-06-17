@@ -124,22 +124,9 @@ router.get('/github/callback', async (req, res) => {
 
     const jwt = generateToken({ username: user.login, githubUser: user.login, avatar: user.avatar_url });
 
-    // Store token in localStorage (popup relay), then close
-    res.send(`
-      <!DOCTYPE html><html><head><meta charset="utf-8"><title>登录成功</title></head><body>
-      <script>
-        localStorage.setItem('ru_admin_token', '${jwt}');
-        localStorage.setItem('ru_admin_username', '${user.login}');
-        localStorage.setItem('ru_admin_avatar', '${user.avatar_url || ''}');
-        localStorage.setItem('ru_admin_ready', 'true');
-        window.close();
-      </script>
-      <p style="text-align:center;font-family:sans-serif;padding-top:40px;color:#333;">
-        登录成功！窗口即将关闭...<br>
-        <small>如未关闭，请手动关闭此窗口</small>
-      </p>
-      </body></html>
-    `);
+    // Redirect back to admin login page with token
+    const siteUrl = process.env.SITE_URL || `http://localhost:${process.env.PORT || 4000}`;
+    res.redirect(`${siteUrl}/#/admin/login?token=${jwt}&username=${encodeURIComponent(user.login)}`);
   } catch (err) {
     console.error('GitHub OAuth error:', err);
     res.status(500).send('登录失败，请重试');

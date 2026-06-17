@@ -1,25 +1,24 @@
 import { useState, useEffect } from 'react';
-import { setAuth } from '@/lib/admin-api';
+import { setAuth, isAuthenticated } from '@/lib/admin-api';
 
 export default function AdminLogin() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  // Poll for GitHub OAuth callback (localStorage relay from popup)
+  // Check for GitHub OAuth callback token in URL
   useEffect(() => {
-    const interval = setInterval(() => {
-      if (localStorage.getItem('ru_admin_ready') === 'true') {
-        const token = localStorage.getItem('ru_admin_token');
-        const username = localStorage.getItem('ru_admin_username');
-        localStorage.removeItem('ru_admin_ready');
-        if (token && username) {
-          setAuth(token, username);
-          window.location.href = '/#/admin';
-        }
-      }
-    }, 500);
-    return () => clearInterval(interval);
+    const params = new URLSearchParams(window.location.hash.split('?')[1] || '');
+    const token = params.get('token');
+    const username = params.get('username');
+    if (token && username) {
+      setAuth(token, username);
+      window.location.href = '/#/admin';
+    }
+    // Also check if already logged in
+    if (isAuthenticated()) {
+      window.location.href = '/#/admin';
+    }
   }, []);
 
   const handlePasswordLogin = async (e: React.FormEvent) => {
@@ -47,14 +46,7 @@ export default function AdminLogin() {
   };
 
   const handleGitHubLogin = () => {
-    const w = 600, h = 700;
-    const left = (screen.width - w) / 2;
-    const top = (screen.height - h) / 2;
-    window.open(
-      '/api/admin/github/login',
-      'github-oauth',
-      `width=${w},height=${h},left=${left},top=${top}`
-    );
+    window.location.href = '/api/admin/github/login';
   };
 
   return (
