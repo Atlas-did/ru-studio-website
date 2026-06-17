@@ -33,9 +33,10 @@ export default function CollectionDetailPage() {
   const content = (item as any).content || '';
   const paragraphs = content ? content.split('\n').filter((p: string) => p.trim()) : [];
 
-  // Gallery images: cover + additional detail shots
+  // 构建画廊图片数组（封面 + 额外图片）
   const galleryImages = [
     { src: item.cover.url, alt: item.cover.alt, caption: '封面' },
+    // 复用不同角度/裁剪的同一图片作为演示
     { src: '/assets/hero-still-life.jpg', alt: '细节展示一', caption: '细节 I' },
     { src: '/assets/crt-temple-texture.jpg', alt: '细节展示二', caption: '细节 II' },
     { src: item.cover.url, alt: '全景', caption: '全景' },
@@ -54,13 +55,14 @@ export default function CollectionDetailPage() {
           </Link>
 
           <div className="flex flex-col md:flex-row md:items-start gap-6 mt-8">
-            {/* Cover image with zoom viewer */}
+            {/* Cover image with zoom */}
             <div className="md:w-1/2 shrink-0">
               <div className="relative aspect-[3/4] overflow-hidden border border-[rgba(168,164,154,0.15)]">
                 <ImageZoomViewer
                   src={item.cover.url}
                   alt={item.cover.alt}
                   zoomScale={3}
+                  className="w-full h-full"
                 />
               </div>
             </div>

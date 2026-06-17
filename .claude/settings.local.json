@@ -4,7 +4,8 @@
       "Bash(npm install *)",
       "Read(//c/Users/finef/AppData/Roaming/**)",
       "Read(//c/Users/finef/**)",
-      "Bash(PATH=/c/nvm4w/nodejs:__TRACKED_VAR__ /c/nvm4w/nodejs/node.exe /c/nvm4w/nodejs/node_modules/npm/bin/npm-cli.js install better-sqlite3 --prefix d:/Temp_download/app)"
+      "Bash(PATH=/c/nvm4w/nodejs:__TRACKED_VAR__ /c/nvm4w/nodejs/node.exe /c/nvm4w/nodejs/node_modules/npm/bin/npm-cli.js install better-sqlite3 --prefix d:/Temp_download/app)",
+      "Bash(/c/nvm4w/nodejs/node.exe -e \"const fs=require\\('fs'\\);const p='d:/Temp_download/app/Kimi_Agent_儒意官网重构\\(1\\)/ru-studio-interaction/src/components/interactive';if\\(fs.existsSync\\(p\\)\\){fs.readdirSync\\(p\\).forEach\\(f=>console.log\\(f\\)\\)}else{console.log\\('NOT FOUND:',p\\)}\")"
     ]
   }
 }
