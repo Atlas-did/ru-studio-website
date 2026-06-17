@@ -9,6 +9,7 @@ const navItems = [
   { label: 'Concepts', path: '/admin/concepts', icon: '◈' },
   { label: 'Collection', path: '/admin/collection', icon: '◆' },
   { label: 'Journal', path: '/admin/journal', icon: '◇' },
+  { label: 'Media', path: '/admin/media', icon: '📁' },
 ];
 
 export default function AdminLayout() {

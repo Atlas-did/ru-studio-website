@@ -7,8 +7,12 @@ import JournalPreview from '@/sections/JournalPreview';
 import CTASection from '@/sections/CTASection';
 import SectionTransition from '@/components/SectionTransition';
 import TimelineSection from '@/components/interactive/TimelineSection';
+import VideoSection from '@/sections/VideoSection';
+import { useSiteData } from '@/hooks/useSiteData';
+import { api } from '@/lib/api';
 
 export default function HomePage() {
+  const { data: config } = useSiteData(() => api.getSiteConfig(), { initialData: {} as any });
   return (
     <>
       <HeroSection />
@@ -22,6 +26,13 @@ export default function HomePage() {
       <WorksSection />
       <SectionTransition from="#2C2C2C" to="#111111" height={60} />
       <ParallaxStrip />
+      <SectionTransition from="#111111" to="#111111" height={60} />
+      <VideoSection
+        videoUrl={(config as any)?.homepageVideoUrl || '/assets/showreel.mp4'}
+        posterUrl="/assets/hero-still-life.jpg"
+        title={(config as any)?.homepageVideoTitle || '影像作品'}
+        subtitle="以当代视角，捕捉千年文脉的光影流转"
+      />
       <SectionTransition from="#111111" to="#F5F2EB" height={80} />
       <JournalPreview />
       <CTASection />

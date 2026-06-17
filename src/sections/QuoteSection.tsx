@@ -1,10 +1,13 @@
 import { useEffect, useRef } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { useSiteData } from '@/hooks/useSiteData';
+import { api } from '@/lib/api';
 
 gsap.registerPlugin(ScrollTrigger);
 
 export default function QuoteSection() {
+  const { data: config } = useSiteData(() => api.getSiteConfig(), { initialData: {} as any });
   const sectionRef = useRef<HTMLElement>(null);
   const textRef = useRef<HTMLQuoteElement>(null);
   const attrRef = useRef<HTMLParagraphElement>(null);
@@ -59,11 +62,11 @@ export default function QuoteSection() {
             className="font-serif text-display-m text-mist leading-relaxed tracking-heading"
             style={{ textWrap: 'balance' }}
           >
-            "以古为新，借古开今"
+            {(config as any)?.quoteText || '以古为新，借古开今'}
           </p>
         </blockquote>
         <p ref={attrRef} className="text-caption text-stone mt-6 text-center tracking-caption">
-          设计理念 / DESIGN PHILOSOPHY
+          {(config as any)?.quoteAttribution || '设计理念 / DESIGN PHILOSOPHY'}
         </p>
       </div>
     </section>

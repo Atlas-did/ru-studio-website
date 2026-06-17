@@ -13,13 +13,15 @@ interface CollectionItem {
   year: number;
   tags: string[];
   content: string;
+  video_url: string;
+  model_url: string;
   sort_order: number;
 }
 
 const emptyItem: CollectionItem = {
   slug: '', title: '', subtitle: '', category: '摄影',
   cover_url: '', cover_alt: '', cover_width: 800, cover_height: 1067,
-  year: new Date().getFullYear(), tags: [], content: '', sort_order: 0,
+  year: new Date().getFullYear(), tags: [], content: '', video_url: '', model_url: '', sort_order: 0,
 };
 
 const categories = ['影像', '摄影', '装置', '纪录'];
@@ -180,6 +182,24 @@ export default function AdminCollection() {
           onChange={(e) => setForm({ ...form, content: e.target.value })}
           className="w-full bg-[rgba(168,164,154,0.06)] border border-[rgba(168,164,154,0.15)] px-3 py-2 font-serif text-sm text-mist focus:outline-none focus:border-cinnabar resize-y leading-relaxed"
           placeholder="输入作品详细介绍，换行即分段..." />
+      </div>
+      <div>
+        <label className="block font-sans text-[10px] tracking-[0.1em] text-text-secondary uppercase mb-1">
+          视频链接（可选）
+        </label>
+        <input type="text" value={(form as any).video_url || ''}
+          onChange={(e) => setForm({ ...form, video_url: e.target.value })}
+          placeholder="粘贴视频 URL，如 https://res.cloudinary.com/..."
+          className="w-full bg-[rgba(168,164,154,0.06)] border border-[rgba(168,164,154,0.15)] px-3 py-2 font-mono text-xs text-mist focus:outline-none focus:border-cinnabar" />
+      </div>
+      <div>
+        <label className="block font-sans text-[10px] tracking-[0.1em] text-text-secondary uppercase mb-1">
+          3D 模型链接（可选，.glb / .gltf）
+        </label>
+        <input type="text" value={(form as any).model_url || ''}
+          onChange={(e) => setForm({ ...form, model_url: e.target.value })}
+          placeholder="粘贴 3D 模型 URL，如 https://res.cloudinary.com/..."
+          className="w-full bg-[rgba(168,164,154,0.06)] border border-[rgba(168,164,154,0.15)] px-3 py-2 font-mono text-xs text-mist focus:outline-none focus:border-cinnabar" />
       </div>
     </div>
   );

@@ -251,15 +251,15 @@ router.get('/collection', (req, res) => {
 router.post('/collection', (req, res) => {
   try {
     const db = getDb();
-    const { slug, title, subtitle, category, cover_url, cover_alt, year, tags, content, sort_order } = req.body;
+    const { slug, title, subtitle, category, cover_url, cover_alt, year, tags, content, video_url, model_url, sort_order } = req.body;
 
     if (!slug || !title || !category || !cover_url) {
       return res.status(400).json({ error: '请填写所有必填字段' });
     }
 
     db.prepare(
-      'INSERT INTO collection_items (slug, title, subtitle, category, cover_url, cover_alt, year, tags, content, sort_order) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
-    ).run(slug, title, subtitle || '', category, cover_url, cover_alt || '', year || new Date().getFullYear(), JSON.stringify(tags || []), content || '', sort_order || 0);
+      'INSERT INTO collection_items (slug, title, subtitle, category, cover_url, cover_alt, year, tags, content, video_url, model_url, sort_order) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
+    ).run(slug, title, subtitle || '', category, cover_url, cover_alt || '', year || new Date().getFullYear(), JSON.stringify(tags || []), content || '', video_url || '', model_url || '', sort_order || 0);
 
     res.json({ success: true, message: '作品已创建' });
   } catch (err) {
@@ -287,11 +287,13 @@ router.put('/collection/:slug', (req, res) => {
     const year = fields.year ?? existing.year;
     const tags = fields.tags ? JSON.stringify(fields.tags) : existing.tags;
     const content = fields.content !== undefined ? fields.content : (existing.content || '');
+    const video_url = fields.video_url !== undefined ? fields.video_url : (existing.video_url || '');
+    const model_url = fields.model_url !== undefined ? fields.model_url : (existing.model_url || '');
     const sort_order = fields.sort_order !== undefined ? fields.sort_order : existing.sort_order;
 
     db.prepare(
-      'UPDATE collection_items SET title=?, subtitle=?, category=?, cover_url=?, cover_alt=?, year=?, tags=?, content=?, sort_order=? WHERE slug=?'
-    ).run(title, subtitle, category, cover_url, cover_alt, year, tags, content, sort_order, slug);
+      'UPDATE collection_items SET title=?, subtitle=?, category=?, cover_url=?, cover_alt=?, year=?, tags=?, content=?, video_url=?, model_url=?, sort_order=? WHERE slug=?'
+    ).run(title, subtitle, category, cover_url, cover_alt, year, tags, content, video_url, model_url, sort_order, slug);
 
     res.json({ success: true, message: '作品已更新' });
   } catch (err) {

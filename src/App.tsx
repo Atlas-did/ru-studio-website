@@ -16,6 +16,7 @@ import AdminAbout from '@/pages/admin/AdminAbout';
 import AdminConcepts from '@/pages/admin/AdminConcepts';
 import AdminCollection from '@/pages/admin/AdminCollection';
 import AdminJournal from '@/pages/admin/AdminJournal';
+import AdminMedia from '@/pages/admin/AdminMedia';
 
 export default function App() {
   return (
@@ -43,6 +44,7 @@ export default function App() {
           <Route path="concepts" element={<AdminConcepts />} />
           <Route path="collection" element={<AdminCollection />} />
           <Route path="journal" element={<AdminJournal />} />
+          <Route path="media" element={<AdminMedia />} />
         </Route>
       </Routes>
     </HashRouter>

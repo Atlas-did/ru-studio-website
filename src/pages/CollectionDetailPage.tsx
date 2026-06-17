@@ -5,6 +5,7 @@ import { api } from '@/lib/api';
 import { getCollectionItems } from '@/lib/data';
 import ImageZoomViewer from '@/components/interactive/ImageZoomViewer';
 import DraggableGallery from '@/components/interactive/DraggableGallery';
+import Model3DViewer from '@/components/interactive/Model3DViewer';
 
 export default function CollectionDetailPage() {
   const { slug } = useParams<{ slug: string }>();
@@ -102,6 +103,28 @@ export default function CollectionDetailPage() {
           <DraggableGallery images={galleryImages} itemWidth={70} gap={16} />
         </div>
       </div>
+
+      {/* Video section */}
+      {(item as any).video_url && (
+        <div className="px-6 md:px-12 py-8">
+          <div className="max-w-4xl mx-auto">
+            <span className="text-overline text-stone mb-4 block">VIDEO</span>
+            <video src={(item as any).video_url} controls
+              className="w-full border border-[rgba(245,242,235,0.08)]"
+              style={{ maxHeight: '70vh' }} />
+          </div>
+        </div>
+      )}
+
+      {/* 3D Model viewer */}
+      {(item as any).model_url && (
+        <div className="px-6 md:px-12 py-8">
+          <div className="max-w-4xl mx-auto">
+            <span className="text-overline text-stone mb-4 block">3D 模型 — 拖拽旋转 · 滚轮缩放</span>
+            <Model3DViewer modelUrl={(item as any).model_url} height="500px" />
+          </div>
+        </div>
+      )}
 
       {/* Article body */}
       {paragraphs.length > 0 && (
