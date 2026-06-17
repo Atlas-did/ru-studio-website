@@ -33,7 +33,7 @@ export default function Footer() {
       links: [
         { label: config?.contactEmail || 'wu27@qfnu.edu.cn', path: `mailto:${config?.contactEmail || 'wu27@qfnu.edu.cn'}` },
         { label: '山东省曲阜市', path: '#' },
-        { label: '曲阜师范大学 · 网络空间安全学院', path: '#' },
+        { label: '曲阜师范大学 · 数学科学学院', path: '#' },
       ],
     },
   ];

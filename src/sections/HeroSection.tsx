@@ -4,6 +4,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useSiteData } from '@/hooks/useSiteData';
 import { api } from '@/lib/api';
 import { getSiteConfig } from '@/lib/data';
+import InkParticleCanvas from '@/components/interactive/InkParticleCanvas';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -141,6 +142,9 @@ export default function HeroSection() {
       ref={sectionRef}
       className="relative w-full h-[100dvh] overflow-hidden bg-ink"
     >
+      {/* Ink particle background */}
+      <InkParticleCanvas particleCount={30} interactionRadius={120} />
+
       {/* Background image with parallax */}
       <div
         ref={imageRef}

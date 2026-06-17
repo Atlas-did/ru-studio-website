@@ -163,6 +163,10 @@ export default function AdminCollection() {
             className="font-sans text-[10px] tracking-[0.1em] text-mist border border-[rgba(168,164,154,0.3)] px-3 py-2 hover:bg-cinnabar hover:border-cinnabar transition-all uppercase whitespace-nowrap disabled:opacity-50">
             {uploading ? '...' : 'Upload'}
           </button>
+          <button onClick={() => setForm({ ...form, cover_url: 'https://images.unsplash.com/photo-1547981609-4b6bfe67ca0b?w=800&q=80' })}
+            className="font-sans text-[9px] text-text-secondary/40 hover:text-mist px-2 py-2 transition-colors">
+            填Unsplash
+          </button>
         </div>
         {form.cover_url && (
           <img src={form.cover_url} alt="preview" className="mt-2 w-32 h-auto object-cover border border-[rgba(168,164,154,0.15)]" />

@@ -181,12 +181,12 @@ function seedData() {
       'INSERT INTO collection_items (slug, title, subtitle, category, cover_url, cover_alt, year, tags, sort_order) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)'
     );
     const items = [
-      { slug: 'bronze-bookmark', title: '论语书签', subtitle: 'Bronze Bookmark with Analects', category: '装置', cover: '/assets/work-bookmark.jpg', alt: '青铜色书签，刻有微缩论语文字', year: 2024, tags: '["金属工艺","文字雕刻","文具"]', order: 0 },
-      { slug: 'temple-ink', title: '孔庙墨影', subtitle: 'Temple Ink Shadow', category: '摄影', cover: '/assets/crt-temple-texture.jpg', alt: '黑白水墨风格孔庙建筑摄影', year: 2024, tags: '["建筑摄影","黑白","孔庙"]', order: 1 },
-      { slug: 'scholar-still', title: '文房静物', subtitle: "Scholar's Still Life", category: '摄影', cover: '/assets/hero-still-life.jpg', alt: '毛笔、砚台、宣纸与几何直尺的静物摄影', year: 2024, tags: '["静物","文房","新中式"]', order: 2 },
-      { slug: 'temple-ink-2', title: '大成殿', subtitle: 'Dacheng Hall', category: '影像', cover: '/assets/crt-temple-texture.jpg', alt: '孔庙大成殿建筑摄影', year: 2024, tags: '["建筑","孔庙","纪录片"]', order: 3 },
-      { slug: 'bookmark-series', title: '书签系列', subtitle: 'Bookmark Collection', category: '装置', cover: '/assets/work-bookmark.jpg', alt: '青铜书签系列', year: 2024, tags: '["金属工艺","系列","文具"]', order: 4 },
-      { slug: 'studio-objects', title: '工作室物件', subtitle: 'Studio Objects', category: '摄影', cover: '/assets/hero-still-life.jpg', alt: '工作室静物', year: 2024, tags: '["静物","工作室","日常"]', order: 5 },
+      { slug: 'bronze-bookmark', title: '论语书签', subtitle: 'Bronze Bookmark with Analects', category: '装置', cover: 'https://images.unsplash.com/photo-1547981609-4b6bfe67ca0b?w=800&q=80', alt: '青铜色书签，刻有微缩论语文字', year: 2024, tags: '["金属工艺","文字雕刻","文具"]', order: 0 },
+      { slug: 'temple-ink', title: '孔庙墨影', subtitle: 'Temple Ink Shadow', category: '摄影', cover: 'https://images.unsplash.com/photo-1508804185872-d7badad00f7d?w=800&q=80', alt: '黑白水墨风格孔庙建筑摄影', year: 2024, tags: '["建筑摄影","黑白","孔庙"]', order: 1 },
+      { slug: 'scholar-still', title: '文房静物', subtitle: "Scholar's Still Life", category: '摄影', cover: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&q=80', alt: '毛笔、砚台、宣纸与几何直尺的静物摄影', year: 2024, tags: '["静物","文房","新中式"]', order: 2 },
+      { slug: 'temple-ink-2', title: '大成殿', subtitle: 'Dacheng Hall', category: '影像', cover: 'https://images.unsplash.com/photo-1508804185872-d7badad00f7d?w=800&q=80', alt: '孔庙大成殿建筑摄影', year: 2024, tags: '["建筑","孔庙","纪录片"]', order: 3 },
+      { slug: 'bookmark-series', title: '书签系列', subtitle: 'Bookmark Collection', category: '装置', cover: 'https://images.unsplash.com/photo-1547981609-4b6bfe67ca0b?w=800&q=80', alt: '青铜书签系列', year: 2024, tags: '["金属工艺","系列","文具"]', order: 4 },
+      { slug: 'studio-objects', title: '工作室物件', subtitle: 'Studio Objects', category: '摄影', cover: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&q=80', alt: '工作室静物', year: 2024, tags: '["静物","工作室","日常"]', order: 5 },
     ];
     items.forEach((item) => insertItem.run(item.slug, item.title, item.subtitle, item.category, item.cover, item.alt, item.year, item.tags, item.order));
   }
