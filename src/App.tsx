@@ -10,6 +10,7 @@ import JournalDetailPage from '@/pages/JournalDetailPage';
 import CooperationPage from '@/pages/CooperationPage';
 import GiftPage from '@/pages/GiftPage';
 import FortunePage from '@/pages/FortunePage';
+import ExperiencePage from '@/pages/ExperiencePage';
 import AdminLayout from '@/pages/admin/AdminLayout';
 import AdminLogin from '@/pages/admin/AdminLogin';
 import AdminDashboard from '@/pages/admin/AdminDashboard';
@@ -36,6 +37,7 @@ export default function App() {
             <Route path="/cooperation" element={<CooperationPage />} />
             <Route path="/gift" element={<GiftPage />} />
             <Route path="/fortune" element={<FortunePage />} />
+            <Route path="/experience/:id" element={<ExperiencePage />} />
           </Route>
         </Route>
 
