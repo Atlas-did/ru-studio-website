@@ -29,13 +29,14 @@ const storage = multer.diskStorage({
 
 const upload = multer({
   storage,
-  limits: { fileSize: 10 * 1024 * 1024 }, // 10MB
+  limits: { fileSize: 50 * 1024 * 1024 }, // 50MB for video/models
   fileFilter: (req, file, cb) => {
-    const allowed = /\.(jpg|jpeg|png|webp|gif|svg)$/i;
-    if (allowed.test(path.extname(file.originalname))) {
+    const ext = path.extname(file.originalname).toLowerCase();
+    const allowed = /\.(jpg|jpeg|png|webp|gif|svg|mp4|webm|mov|glb|gltf|bin)$/i;
+    if (allowed.test(ext)) {
       cb(null, true);
     } else {
-      cb(new Error('仅支持 JPG、PNG、WebP、GIF、SVG 格式'));
+      cb(new Error('仅支持图片、视频、3D模型格式 (JPG/PNG/WebP/GIF/SVG/MP4/WebM/MOV/GLB/GLTF)'));
     }
   },
 });

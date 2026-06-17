@@ -23,9 +23,8 @@ dist-ssr
 *.sln
 *.sw?
 
-# Reference / design files
-Kimi_Agent_儒意官网重构/
-Kimi_Agent_儒意官网重构(1)/
+# Reference / design files — exclude all variants
+Kimi_Agent*/
 
 # Database files (generated at runtime)
 data/rustudio.db
