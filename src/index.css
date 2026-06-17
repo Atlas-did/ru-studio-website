@@ -88,13 +88,6 @@
     outline-offset: 2px;
   }
 
-  /* Hide default cursor on desktop when custom cursor enabled */
-  @media (hover: hover) and (pointer: fine) {
-    body.custom-cursor-enabled,
-    body.custom-cursor-enabled * {
-      cursor: none !important;
-    }
-  }
 }
 
 @layer components {
