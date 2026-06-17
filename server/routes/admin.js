@@ -68,6 +68,73 @@ router.post('/login', (req, res) => {
   }
 });
 
+// ─── GitHub OAuth Login ───
+const GITHUB_CLIENT_ID = process.env.GITHUB_CLIENT_ID;
+const GITHUB_CLIENT_SECRET = process.env.GITHUB_CLIENT_SECRET;
+const GITHUB_REPO = process.env.GITHUB_REPO || 'Atlas-did/ru-studio-website';
+
+router.get('/github/login', (req, res) => {
+  if (!GITHUB_CLIENT_ID) return res.status(400).json({ error: 'GitHub OAuth not configured' });
+  const redirect = `https://github.com/login/oauth/authorize?client_id=${GITHUB_CLIENT_ID}&scope=read:user`;
+  res.redirect(redirect);
+});
+
+router.get('/github/callback', async (req, res) => {
+  try {
+    const { code } = req.query;
+    if (!code) return res.status(400).json({ error: 'No code provided' });
+
+    // Exchange code for access token
+    const tokenRes = await fetch('https://github.com/login/oauth/access_token', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify({ client_id: GITHUB_CLIENT_ID, client_secret: GITHUB_CLIENT_SECRET, code }),
+    });
+    const tokenData = await tokenRes.json();
+    if (!tokenData.access_token) return res.status(401).json({ error: 'GitHub auth failed' });
+
+    // Get user info
+    const userRes = await fetch('https://api.github.com/user', {
+      headers: { 'Authorization': `Bearer ${tokenData.access_token}`, 'User-Agent': 'RU-Studio' },
+    });
+    const user = await userRes.json();
+
+    // Check if user is a collaborator
+    const collabRes = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/collaborators/${user.login}`, {
+      headers: { 'Authorization': `Bearer ${tokenData.access_token}`, 'User-Agent': 'RU-Studio' },
+    });
+    if (collabRes.status !== 204) {
+      return res.status(403).json({ error: '你不是该仓库的协作者，无权登录。' });
+    }
+
+    // Create JWT
+    const db = getDb();
+    // Auto-create admin user if not exists
+    const existing = db.prepare('SELECT * FROM admins WHERE username = ?').get(user.login);
+    if (!existing) {
+      const bcrypt = await import('bcryptjs');
+      db.prepare('INSERT OR REPLACE INTO admins (username, password_hash) VALUES (?, ?)')
+        .run(user.login, bcrypt.default.hashSync(user.login + process.env.JWT_SECRET || 'default', 10));
+    }
+
+    const jwt = generateToken({ username: user.login, githubUser: user.login, avatar: user.avatar_url });
+
+    // Return HTML that posts token back to parent
+    res.send(`
+      <!DOCTYPE html><html><head><meta charset="utf-8"><title>登录成功</title></head><body>
+      <script>
+        window.opener.postMessage({ type: 'github-login', token: '${jwt}', username: '${user.login}', avatar: '${user.avatar_url}' }, '*');
+        window.close();
+      </script>
+      <p>登录成功！窗口即将关闭...</p>
+      </body></html>
+    `);
+  } catch (err) {
+    console.error('GitHub OAuth error:', err);
+    res.status(500).send('登录失败，请重试');
+  }
+});
+
 // All routes below require auth
 router.use(authMiddleware);
 
@@ -317,11 +384,43 @@ router.delete('/journal/:slug', (req, res) => {
 });
 
 // ─── Image Upload ───
-router.post('/upload', upload.single('file'), (req, res) => {
+// ─── Image/Video/3D Upload — Cloudinary or local ───
+router.post('/upload', upload.single('file'), async (req, res) => {
   try {
     if (!req.file) {
       return res.status(400).json({ error: '请选择要上传的文件' });
     }
+
+    // Try Cloudinary first if configured
+    const cloudName = process.env.CLOUDINARY_CLOUD_NAME;
+    const apiKey = process.env.CLOUDINARY_API_KEY;
+    const apiSecret = process.env.CLOUDINARY_API_SECRET;
+
+    if (cloudName && apiKey && apiSecret) {
+      try {
+        const cloudinary = await import('cloudinary');
+        cloudinary.v2.config({ cloud_name: cloudName, api_key: apiKey, api_secret: apiSecret });
+
+        const ext = path.extname(req.file.originalname).toLowerCase();
+        const isVideo = /\.(mp4|webm|mov)$/i.test(ext);
+        const isModel = /\.(glb|gltf)$/i.test(ext);
+
+        const result = await cloudinary.v2.uploader.upload(req.file.path, {
+          folder: 'ru-studio',
+          resource_type: isVideo ? 'video' : isModel ? 'raw' : 'image',
+          use_filename: true,
+          unique_filename: true,
+        });
+
+        // Clean up local temp file
+        fs.unlink(req.file.path, () => {});
+        return res.json({ success: true, url: result.secure_url, filename: req.file.filename });
+      } catch (cloudErr) {
+        console.warn('Cloudinary upload failed, falling back to local:', cloudErr.message);
+      }
+    }
+
+    // Local fallback
     const url = '/uploads/' + req.file.filename;
     res.json({ success: true, url, filename: req.file.filename });
   } catch (err) {
@@ -330,7 +429,7 @@ router.post('/upload', upload.single('file'), (req, res) => {
   }
 }, (err, req, res, next) => {
   if (err instanceof multer.MulterError) {
-    return res.status(400).json({ error: '文件太大，最大支持 10MB' });
+    return res.status(400).json({ error: '文件太大，最大支持 50MB' });
   }
   if (err) {
     return res.status(400).json({ error: err.message });
