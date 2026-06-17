@@ -1,4 +1,4 @@
-import { HashRouter, Routes, Route } from 'react-router-dom';
+﻿import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Layout from '@/components/Layout';
 import PageTransition from '@/components/PageTransition';
 import HomePage from '@/pages/HomePage';
@@ -23,9 +23,9 @@ import AdminMedia from '@/pages/admin/AdminMedia';
 
 export default function App() {
   return (
-    <HashRouter>
+    <BrowserRouter>
       <Routes>
-        {/* Public routes — PageTransition wraps Layout for ink-wipe cross-page animation */}
+        {/* Public routes 鈥?PageTransition wraps Layout for ink-wipe cross-page animation */}
         <Route element={<PageTransition />}>
           <Route element={<Layout />}>
             <Route path="/" element={<HomePage />} />
@@ -53,6 +53,6 @@ export default function App() {
           <Route path="media" element={<AdminMedia />} />
         </Route>
       </Routes>
-    </HashRouter>
+    </BrowserRouter>
   );
 }

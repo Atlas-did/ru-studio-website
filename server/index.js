@@ -1,4 +1,4 @@
-import express from 'express';
+﻿import express from 'express';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import cors from 'cors';
@@ -47,7 +47,7 @@ app.use('/api/admin', adminRoutes);
 // Healthcheck
 app.get('/health', (req, res) => res.status(200).json({ status: 'ok' }));
 
-// SPA fallback — serve index.html for all non-API routes
+// SPA fallback 鈥?serve index.html for all non-API routes
 app.get('/{*path}', (req, res) => {
   if (req.path.startsWith('/api/')) {
     return res.status(404).json({ error: 'API endpoint not found' });
@@ -65,5 +65,5 @@ try {
 
 app.listen(PORT, () => {
   console.log(`Server running at http://localhost:${PORT}`);
-  console.log(`Admin panel at http://localhost:${PORT}/#/admin`);
+  console.log(`Admin panel at http://localhost:${PORT}/admin`);
 });

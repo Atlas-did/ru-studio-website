@@ -1,4 +1,4 @@
-import path from 'path';
+﻿import path from 'path';
 import fs from 'fs';
 import { fileURLToPath } from 'url';
 import bcrypt from 'bcryptjs';
@@ -39,7 +39,7 @@ function getDb() {
   if (db) return db;
 
   db = new DatabaseSync(DB_PATH);
-  db.exec('PRAGMA journal_mode = WAL');
+  // ─── Schema ───
   db.exec('PRAGMA foreign_keys = ON');
 
   // Create tables
@@ -107,7 +107,7 @@ function getDb() {
     );
   `);
 
-  // Migrate: add new columns if they don't exist (safe to run on existing DB)
+  // ─── Column migrations ───
   try { db.exec('ALTER TABLE journal_posts ADD COLUMN content TEXT DEFAULT \'\''); } catch {}
   try { db.exec('ALTER TABLE journal_posts ADD COLUMN image_url TEXT DEFAULT \'\''); } catch {}
   try { db.exec('ALTER TABLE journal_posts ADD COLUMN video_url TEXT DEFAULT \'\''); } catch {}
@@ -140,7 +140,7 @@ function getDb() {
     insertAbout.run('roadmap', '发展规划', '短期 1-2 年\n完善核心产品矩阵，打造3-5款年度爆款，实现年营收突破80万元。\n\n中期 3-5 年\n建立儒家文创设计标准体系，开展IP授权业务，拓展省外合作渠道。\n\n长期 5-10 年\n推动文创产品成为儒学海外传播载体，构建国际化文化品牌。', 3);
   }
 
-  // Seed default data if tables are empty
+  // ─── Seed data ───
   seedData();
 
   return db;
