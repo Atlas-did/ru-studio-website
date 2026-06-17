@@ -99,12 +99,17 @@ router.get('/github/callback', async (req, res) => {
     });
     const user = await userRes.json();
 
-    // Check if user is a collaborator
-    const collabRes = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/collaborators/${user.login}`, {
-      headers: { 'Authorization': `Bearer ${tokenData.access_token}`, 'User-Agent': 'RU-Studio' },
-    });
-    if (collabRes.status !== 204) {
-      return res.status(403).json({ error: '你不是该仓库的协作者，无权登录。' });
+    // Check if user is the repo owner or a collaborator
+    const repoOwner = GITHUB_REPO.split('/')[0];
+    const isOwner = user.login === repoOwner;
+
+    if (!isOwner) {
+      const collabRes = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/collaborators/${user.login}`, {
+        headers: { 'Authorization': `Bearer ${tokenData.access_token}`, 'User-Agent': 'RU-Studio' },
+      });
+      if (collabRes.status !== 204) {
+        return res.status(403).json({ error: '你不是该仓库的协作者，无权登录。' });
+      }
     }
 
     // Create JWT
