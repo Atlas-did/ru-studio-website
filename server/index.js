@@ -47,11 +47,12 @@ app.use('/api/admin', adminRoutes);
 // Healthcheck
 app.get('/health', (req, res) => res.status(200).json({ status: 'ok' }));
 
-// SPA fallback 鈥?serve index.html for all non-API routes
-app.get('/{*path}', (req, res) => {
-  if (req.path.startsWith('/api/')) {
-    return res.status(404).json({ error: 'API endpoint not found' });
-  }
+// SPA fallback for BrowserRouter — serve index.html for all non-API, non-file routes
+app.use((req, res, next) => {
+  if (req.path.startsWith('/api/') || req.path.startsWith('/uploads/') || req.path === '/health') return next();
+  // If request looks like a static file (has extension), 404
+  if (path.extname(req.path)) return res.status(404).json({ error: 'Not found' });
+  // SPA: serve index.html
   res.sendFile(path.join(distDir, 'index.html'));
 });
 
