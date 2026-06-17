@@ -8,18 +8,17 @@ export default function CustomCursor() {
   const [isTouch, setIsTouch] = useState(false);
 
   useEffect(() => {
-    if (window.matchMedia('(hover: none)').matches) {
-      setIsTouch(true);
-      return;
-    }
+    if (window.matchMedia('(hover: none)').matches) { setIsTouch(true); return; }
 
     document.body.classList.add('custom-cursor-enabled');
     const dot = dotRef.current;
     if (!dot) return;
 
-    const onMove = (e: MouseEvent) => {
-      dot.style.transform = `translate3d(${e.clientX - 4}px, ${e.clientY - 4}px, 0)`;
-    };
+    let lastX = -9999, lastY = -9999;
+    const repaint = () => { dot.style.transform = `translate(${lastX - 4}px, ${lastY - 4}px)`; };
+    const onMove = (e: MouseEvent) => { lastX = e.clientX; lastY = e.clientY; repaint(); };
+    // Re-sync on scroll/wheel so cursor doesn't lag behind content
+    const onScroll = () => repaint();
 
     const onOver = (e: MouseEvent) => {
       const t = e.target as HTMLElement;
@@ -32,11 +31,15 @@ export default function CustomCursor() {
 
     window.addEventListener('mousemove', onMove, { passive: true });
     window.addEventListener('mouseover', onOver, { passive: true });
+    window.addEventListener('scroll', onScroll, { passive: true, capture: true });
+    window.addEventListener('wheel', onScroll, { passive: true });
 
     return () => {
       document.body.classList.remove('custom-cursor-enabled');
       window.removeEventListener('mousemove', onMove);
       window.removeEventListener('mouseover', onOver);
+      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('wheel', onScroll);
     };
   }, []);
 
@@ -51,20 +54,15 @@ export default function CustomCursor() {
       className="pointer-events-none"
       style={{
         position: 'fixed',
-        top: 0,
-        left: 0,
+        top: 0, left: 0,
         zIndex: 9997,
-        width: `${size}px`,
-        height: `${size}px`,
+        width: `${size}px`, height: `${size}px`,
         borderRadius: '50%',
         border: cursorState === 'default' ? 'none' : '1px solid rgba(255,255,255,0.4)',
         backgroundColor: cursorState === 'default' ? '#fff' : 'transparent',
         transition: 'width 0.2s ease, height 0.2s ease, border 0.2s ease, background-color 0.2s ease',
         mixBlendMode: 'difference',
-        willChange: 'transform',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
       }}
     >
       {cursorState === 'view' && (
