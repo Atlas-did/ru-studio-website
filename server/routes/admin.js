@@ -398,14 +398,18 @@ router.post('/upload', upload.single('file'), async (req, res) => {
 
     if (cloudName && apiKey && apiSecret) {
       try {
-        const cloudinary = await import('cloudinary');
-        cloudinary.v2.config({ cloud_name: cloudName, api_key: apiKey, api_secret: apiSecret });
+        // Dynamic import returns { default: cloudinary } or { v2: ... }
+        const cloudinaryModule = await import('cloudinary');
+        const cloudinary = cloudinaryModule.v2 || cloudinaryModule.default?.v2;
+        if (!cloudinary) throw new Error('Cloudinary v2 not found in module');
+
+        cloudinary.config({ cloud_name: cloudName, api_key: apiKey, api_secret: apiSecret });
 
         const ext = path.extname(req.file.originalname).toLowerCase();
         const isVideo = /\.(mp4|webm|mov)$/i.test(ext);
-        const isModel = /\.(glb|gltf)$/i.test(ext);
+        const isModel = /\.(glb|gltf|bin)$/i.test(ext);
 
-        const result = await cloudinary.v2.uploader.upload(req.file.path, {
+        const result = await cloudinary.uploader.upload(req.file.path, {
           folder: 'ru-studio',
           resource_type: isVideo ? 'video' : isModel ? 'raw' : 'image',
           use_filename: true,
@@ -414,15 +418,19 @@ router.post('/upload', upload.single('file'), async (req, res) => {
 
         // Clean up local temp file
         fs.unlink(req.file.path, () => {});
-        return res.json({ success: true, url: result.secure_url, filename: req.file.filename });
+        console.log('Cloudinary upload OK:', result.secure_url);
+        return res.json({ success: true, url: result.secure_url, filename: req.file.filename, storage: 'cloudinary' });
       } catch (cloudErr) {
-        console.warn('Cloudinary upload failed, falling back to local:', cloudErr.message);
+        console.error('Cloudinary upload failed:', cloudErr.message);
+        // Clean up temp file even on failure
+        try { fs.unlink(req.file.path, () => {}); } catch {}
+        return res.status(500).json({ error: 'Cloudinary 上传失败: ' + (cloudErr.message || '未知错误') });
       }
     }
 
-    // Local fallback
+    // Local fallback (no Cloudinary configured)
     const url = '/uploads/' + req.file.filename;
-    res.json({ success: true, url, filename: req.file.filename });
+    res.json({ success: true, url, filename: req.file.filename, storage: 'local' });
   } catch (err) {
     console.error('Upload error:', err);
     res.status(500).json({ error: '上传失败' });
