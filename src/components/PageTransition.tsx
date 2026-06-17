@@ -19,11 +19,11 @@ export default function PageTransition() {
       },
     });
 
-    // Ink wipe: scaleX from left edge
+    // Ink wipe: fast scaleX across screen
     tl.set(overlay, { scaleX: 0, transformOrigin: 'left' });
-    tl.to(overlay, { scaleX: 1, duration: 0.5, ease: 'power3.inOut' });
+    tl.to(overlay, { scaleX: 1, duration: 0.25, ease: 'power3.in' });
     tl.set(overlay, { transformOrigin: 'right' });
-    tl.to(overlay, { scaleX: 0, duration: 0.5, ease: 'power3.inOut', delay: 0.05 });
+    tl.to(overlay, { scaleX: 0, duration: 0.25, ease: 'power3.out' });
 
     return () => {
       tl.kill();

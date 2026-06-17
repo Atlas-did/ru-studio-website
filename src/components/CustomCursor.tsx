@@ -104,35 +104,50 @@ export default function CustomCursor() {
 
   return (
     <>
-      {/* Outer ring */}
+      {/* Outer ring — mix-blend-mode ensures visibility on any background */}
       <div
         ref={cursorRef}
-        className={`fixed top-0 left-0 pointer-events-none z-[9997] -translate-x-1/2 -translate-y-1/2 rounded-full border transition-colors duration-200 ${
+        className={`fixed top-0 left-0 pointer-events-none z-[9997] -translate-x-1/2 -translate-y-1/2 rounded-full transition-all duration-200 ${
           cursorState === 'default'
-            ? 'border-mist/50 bg-transparent'
+            ? 'border border-white/60 bg-transparent'
             : cursorState === 'hover'
-            ? 'border-mist/30 bg-mist/5'
+            ? 'border border-white/40 bg-white/10'
             : cursorState === 'view'
-            ? 'border-cinnabar/40 bg-cinnabar/10'
-            : 'border-gold/30 bg-gold/5'
+            ? 'border border-white/60 bg-white/15'
+            : 'border border-white/40 bg-white/10'
         }`}
-        style={{ width: 12, height: 12 }}
+        style={{
+          width: 12,
+          height: 12,
+          mixBlendMode: 'difference',
+          willChange: 'width, height',
+        }}
       >
         {cursorState === 'view' && (
-          <span className="absolute inset-0 flex items-center justify-center text-[10px] text-mist/70 font-sans">
+          <span
+            className="absolute inset-0 flex items-center justify-center text-[10px] text-white/80 font-sans"
+            style={{ mixBlendMode: 'difference' }}
+          >
             查看
           </span>
         )}
         {cursorState === 'drag' && (
-          <span className="absolute inset-0 flex items-center justify-center text-[10px] text-gold/70 font-sans">
+          <span
+            className="absolute inset-0 flex items-center justify-center text-[10px] text-white/80 font-sans"
+            style={{ mixBlendMode: 'difference' }}
+          >
             拖拽
           </span>
         )}
       </div>
-      {/* Center dot */}
+      {/* Center dot — mix-blend-mode for contrast */}
       <div
         ref={cursorDotRef}
-        className="fixed top-0 left-0 pointer-events-none z-[9997] w-0.5 h-0.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-mist"
+        className="fixed top-0 left-0 pointer-events-none z-[9997] w-[3px] h-[3px] -translate-x-1/2 -translate-y-1/2 rounded-full"
+        style={{
+          backgroundColor: '#fff',
+          mixBlendMode: 'difference',
+        }}
       />
     </>
   );
