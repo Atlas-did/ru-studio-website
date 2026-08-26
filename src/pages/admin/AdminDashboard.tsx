@@ -30,12 +30,12 @@ export default function AdminDashboard() {
   return (
     <div>
       <h1 className="font-display text-2xl text-mist tracking-wide mb-8">Dashboard</h1>
-      <p className="font-sans text-[11px] tracking-[0.15em] text-text-secondary uppercase mb-8">
+      <p className="font-sans text-[11px] tracking-[0.15em] text-fg-secondary uppercase mb-8">
         Overview
       </p>
 
       {loading ? (
-        <p className="font-serif text-sm text-text-secondary">Loading...</p>
+        <p className="font-serif text-sm text-fg-secondary">Loading...</p>
       ) : (
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {cards.map((card) => (
@@ -44,7 +44,7 @@ export default function AdminDashboard() {
               className={`bg-[rgba(168,164,154,0.04)] border-l-2 ${card.color} p-5`}
             >
               <p className="font-display text-3xl text-mist mb-1">{card.value}</p>
-              <p className="font-sans text-[10px] tracking-[0.1em] text-text-secondary uppercase">
+              <p className="font-sans text-[10px] tracking-[0.1em] text-fg-secondary uppercase">
                 {card.label}
               </p>
             </div>
@@ -54,11 +54,11 @@ export default function AdminDashboard() {
 
       <div className="mt-12 p-6 bg-[rgba(168,164,154,0.04)] border border-[rgba(168,164,154,0.1)]">
         <h2 className="font-serif text-sm font-medium text-mist mb-2">快速开始</h2>
-        <p className="font-serif text-sm text-text-secondary leading-relaxed">
+        <p className="font-serif text-sm text-fg-secondary leading-relaxed">
           使用左侧菜单管理网站内容：修改品牌配置、编辑核心概念、管理作品收藏、发布宣发日志。
           所有修改将即时生效。
         </p>
-        <p className="mt-3 font-sans text-[10px] text-text-secondary/50">
+        <p className="mt-3 font-sans text-[10px] text-fg-secondary/50">
           默认管理员密码: admin123 — 请通过直接修改数据库来更改密码。
         </p>
       </div>

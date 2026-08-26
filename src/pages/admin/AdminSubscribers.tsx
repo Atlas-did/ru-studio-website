@@ -43,7 +43,7 @@ export default function AdminSubscribers() {
           导出 CSV ↓
         </a>
       </div>
-      <p className="font-sans text-xs text-text-secondary mb-8">
+      <p className="font-sans text-xs text-fg-secondary mb-8">
         共 {subs.length} 位订阅者。推送功能将在 SMTP 配置后开放。
       </p>
 
@@ -52,18 +52,18 @@ export default function AdminSubscribers() {
           <div key={s.id} className="flex items-center justify-between px-4 py-3">
             <div>
               <span className="font-sans text-sm text-mist">{s.email}</span>
-              <span className="font-sans text-[10px] text-text-secondary ml-4">{s.created_at}</span>
+              <span className="font-sans text-[10px] text-fg-secondary ml-4">{s.created_at}</span>
             </div>
             <button
               onClick={() => onDelete(s.id)}
-              className="font-sans text-[10px] text-text-secondary hover:text-cinnabar uppercase tracking-wider"
+              className="font-sans text-[10px] text-fg-secondary hover:text-cinnabar uppercase tracking-wider"
             >
               Delete
             </button>
           </div>
         ))}
         {subs.length === 0 && (
-          <p className="font-sans text-xs text-text-secondary px-4 py-6">
+          <p className="font-sans text-xs text-fg-secondary px-4 py-6">
             暂无订阅者 —— 前台页脚的订阅表单收集的邮箱会出现在这里。
           </p>
         )}

@@ -5,7 +5,10 @@ import { inspectAttr } from 'kimi-plugin-inspect-react'
 
 // https://vite.dev/config/
 export default defineConfig({
-  base: './',
+  // 必须用绝对路径，否则浏览器直接打开深层路由（/admin/login、/collection/:slug）时
+  // 相对路径资源会被解析到错误位置，导致整站白屏。
+  // Gitee Pages 等子目录静态托管如需支持，应单独构建或用 HashRouter。
+  base: '/',
   plugins: [inspectAttr(), react()],
   server: {
     port: 3000,

@@ -41,7 +41,7 @@ export default function AdminLayout() {
           <Link to="/" className="font-display text-2xl text-mist hover:text-cinnabar transition-colors">
             儒
           </Link>
-          <p className="mt-1 font-sans text-[10px] tracking-[0.15em] text-text-secondary uppercase">
+          <p className="mt-1 font-sans text-[10px] tracking-[0.15em] text-fg-secondary uppercase">
             Admin Panel
           </p>
         </div>
@@ -59,7 +59,7 @@ export default function AdminLayout() {
                 className={`flex items-center gap-3 px-3 py-2.5 mb-1 font-sans text-xs tracking-[0.1em] transition-all duration-200 ${
                   isActive
                     ? 'text-mist bg-[rgba(168,164,154,0.08)] border-l border-cinnabar'
-                    : 'text-text-secondary hover:text-mist hover:bg-[rgba(168,164,154,0.04)]'
+                    : 'text-fg-secondary hover:text-mist hover:bg-[rgba(168,164,154,0.04)]'
                 }`}
               >
                 <span className="text-sm">{item.icon}</span>
@@ -70,18 +70,18 @@ export default function AdminLayout() {
         </nav>
 
         <div className="px-4 py-4 border-t border-[rgba(168,164,154,0.12)]">
-          <p className="px-3 font-sans text-[10px] text-text-secondary/50 mb-2">
+          <p className="px-3 font-sans text-[10px] text-fg-secondary/50 mb-2">
             {getUsername()}
           </p>
           <button
             onClick={handleLogout}
-            className="w-full text-left px-3 py-2 font-sans text-[10px] tracking-[0.1em] text-text-secondary hover:text-cinnabar transition-colors uppercase"
+            className="w-full text-left px-3 py-2 font-sans text-[10px] tracking-[0.1em] text-fg-secondary hover:text-cinnabar transition-colors uppercase"
           >
             Logout →
           </button>
           <Link
             to="/"
-            className="block px-3 py-1.5 font-sans text-[10px] tracking-[0.1em] text-text-secondary/50 hover:text-mist transition-colors uppercase"
+            className="block px-3 py-1.5 font-sans text-[10px] tracking-[0.1em] text-fg-secondary/50 hover:text-mist transition-colors uppercase"
           >
             View Site
           </Link>

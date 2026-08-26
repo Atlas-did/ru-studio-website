@@ -109,15 +109,21 @@ export default function Footer() {
             <h4 className="text-overline text-fg-muted mb-6">关注</h4>
             <ul className="space-y-3">
               {[
-                { label: '微信公众号', path: '#' },
-                { label: '小红书', path: '#' },
-                { label: 'Instagram', path: '#' },
-                { label: 'Bilibili', path: '#' },
+                { label: '微信公众号', path: '' },
+                { label: '小红书', path: '' },
+                { label: 'Instagram', path: '' },
+                { label: 'Bilibili', path: '' },
               ].map((l) => (
                 <li key={l.label}>
-                  <a href={l.path} className="brush-underline text-caption text-fg-secondary hover:text-fg transition-colors duration-300">
-                    {l.label}
-                  </a>
+                  {l.path ? (
+                    <a href={l.path} target="_blank" rel="noopener noreferrer" className="brush-underline text-caption text-fg-secondary hover:text-fg transition-colors duration-300">
+                      {l.label}
+                    </a>
+                  ) : (
+                    <span className="text-caption text-fg-muted cursor-not-allowed" title="账号链接待补充">
+                      {l.label}
+                    </span>
+                  )}
                 </li>
               ))}
             </ul>

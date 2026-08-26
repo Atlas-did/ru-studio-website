@@ -1,8 +1,9 @@
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 
-/** Routes belonging to the light 「宣」 reading chapter. Everything else is dark 「墨」. */
-const PAPER_ROUTES = ['/journal', '/about', '/cooperation', '/press'];
+/** Routes belonging to the light 「宣」 reading chapter. Everything else is dark 「墨」.
+ *  /about 与 /cooperation 使用 bg-ink 深色背景，应跟随墨色叙事，故不列入浅色路由。 */
+const PAPER_ROUTES = ['/journal', '/press'];
 
 function resolveTheme(pathname: string): 'ink' | 'paper' {
   return PAPER_ROUTES.some((r) => pathname === r || pathname.startsWith(r + '/')) ? 'paper' : 'ink';

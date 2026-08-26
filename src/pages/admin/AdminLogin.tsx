@@ -27,21 +27,21 @@ export default function AdminLogin() {
       <div className="w-full max-w-sm">
         <div className="text-center mb-10">
           <h1 className="font-display text-4xl text-mist mb-2">儒</h1>
-          <p className="font-sans text-[11px] tracking-[0.2em] text-text-secondary uppercase">
+          <p className="font-sans text-[11px] tracking-[0.2em] text-fg-secondary uppercase">
             Admin Panel
           </p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <label className="block font-sans text-[11px] tracking-[0.15em] text-text-secondary uppercase mb-3">
+            <label className="block font-sans text-[11px] tracking-[0.15em] text-fg-secondary uppercase mb-3">
               管理员密码
             </label>
             <input
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full bg-transparent border-b border-[rgba(168,164,154,0.3)] py-3 font-serif text-mist placeholder:text-text-secondary/40 focus:outline-none focus:border-cinnabar transition-colors duration-300"
+              className="w-full bg-transparent border-b border-[rgba(168,164,154,0.3)] py-3 font-serif text-mist placeholder:text-fg-secondary/40 focus:outline-none focus:border-cinnabar transition-colors duration-300"
               placeholder="输入管理员密码"
               autoFocus
             />
@@ -60,7 +60,7 @@ export default function AdminLogin() {
           </button>
         </form>
 
-        <p className="mt-8 text-center font-sans text-[10px] text-text-secondary/30">
+        <p className="mt-8 text-center font-sans text-[10px] text-fg-secondary/30">
           RU STUDIO Admin Panel
         </p>
       </div>

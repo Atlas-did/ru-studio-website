@@ -45,14 +45,14 @@ export default function AdminSiteConfig() {
   return (
     <div>
       <h1 className="font-display text-2xl text-mist tracking-wide mb-8">Site Config</h1>
-      <p className="font-sans text-[11px] tracking-[0.15em] text-text-secondary uppercase mb-8">
+      <p className="font-sans text-[11px] tracking-[0.15em] text-fg-secondary uppercase mb-8">
         品牌配置
       </p>
 
       <div className="space-y-6">
         {fields.map((field) => (
           <div key={field.key}>
-            <label className="block font-sans text-[11px] tracking-[0.1em] text-text-secondary uppercase mb-2">
+            <label className="block font-sans text-[11px] tracking-[0.1em] text-fg-secondary uppercase mb-2">
               {field.label}
             </label>
             <input

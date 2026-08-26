@@ -129,6 +129,12 @@ app.get('/{*path}', (req, res) => {
     return res.status(404).json({ error: 'API endpoint not found' });
   }
 
+  // 带文件扩展名的请求（如 /assets/*.js、/favicon.ico）不应回退到 index.html，
+  // 否则旧缓存的 chunk 请求会拿到 HTML 导致动态 import 失败。
+  if (/\.[a-z0-9]+$/i.test(req.path) || req.path.startsWith('/assets/')) {
+    return res.status(404).type('text').send('Not found');
+  }
+
   try {
     if (!cachedIndexHtml) {
       cachedIndexHtml = fs.readFileSync(path.join(distDir, 'index.html'), 'utf-8');
@@ -184,10 +190,12 @@ app.get('/{*path}', (req, res) => {
       return res.status(200).type('html').send(html);
     }
 
-    res.sendFile(path.join(distDir, 'index.html'));
+    // Note: res.sendFile 在当前 send@1.2.1 版本下对深层路由异常返回 404，
+    // 因此统一走 readFileSync + send 模式（与上方 SEO 分支一致）。
+    res.status(200).type('html').send(cachedIndexHtml);
   } catch (err) {
     console.error('SPA fallback error:', err);
-    res.sendFile(path.join(distDir, 'index.html'));
+    res.status(200).type('html').send(cachedIndexHtml);
   }
 });
 

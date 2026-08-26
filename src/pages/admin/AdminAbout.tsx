@@ -63,7 +63,7 @@ export default function AdminAbout() {
   };
 
   if (loading) {
-    return <p className="font-serif text-sm text-text-secondary">Loading...</p>;
+    return <p className="font-serif text-sm text-fg-secondary">Loading...</p>;
   }
 
   return (
@@ -71,13 +71,13 @@ export default function AdminAbout() {
       <div className="flex items-center justify-between mb-8">
         <div>
           <h1 className="font-display text-2xl text-mist tracking-wide">About Page</h1>
-          <p className="mt-1 font-sans text-[11px] tracking-[0.15em] text-text-secondary uppercase">
+          <p className="mt-1 font-sans text-[11px] tracking-[0.15em] text-fg-secondary uppercase">
             关于页面内容管理
           </p>
         </div>
       </div>
 
-      <p className="font-serif text-sm text-text-secondary/60 mb-8 leading-relaxed">
+      <p className="font-serif text-sm text-fg-secondary/60 mb-8 leading-relaxed">
         编辑关于页面的各个章节。换行即分段，保存后实时生效。
       </p>
 
@@ -93,13 +93,13 @@ export default function AdminAbout() {
           </h2>
           <div className="space-y-4 mb-6">
             <div>
-              <label className="block font-sans text-[10px] tracking-[0.1em] text-text-secondary uppercase mb-1">标题</label>
+              <label className="block font-sans text-[10px] tracking-[0.1em] text-fg-secondary uppercase mb-1">标题</label>
               <input type="text" value={form.title}
                 onChange={(e) => setForm({ ...form, title: e.target.value })}
                 className="w-full bg-[rgba(168,164,154,0.06)] border border-[rgba(168,164,154,0.15)] px-3 py-2 font-serif text-sm text-mist focus:outline-none focus:border-cinnabar" />
             </div>
             <div>
-              <label className="block font-sans text-[10px] tracking-[0.1em] text-text-secondary uppercase mb-1">
+              <label className="block font-sans text-[10px] tracking-[0.1em] text-fg-secondary uppercase mb-1">
                 正文（换行分段）
               </label>
               <textarea value={form.content} rows={10}
@@ -111,7 +111,7 @@ export default function AdminAbout() {
             <button onClick={handleSave}
               className="font-sans text-[10px] tracking-[0.15em] text-mist bg-cinnabar px-5 py-2 hover:opacity-80 transition-opacity uppercase">Save</button>
             <button onClick={() => setEditing(null)}
-              className="font-sans text-[10px] tracking-[0.15em] text-text-secondary border border-[rgba(168,164,154,0.3)] px-5 py-2 hover:text-mist transition-colors uppercase">Cancel</button>
+              className="font-sans text-[10px] tracking-[0.15em] text-fg-secondary border border-[rgba(168,164,154,0.3)] px-5 py-2 hover:text-mist transition-colors uppercase">Cancel</button>
           </div>
         </div>
       )}
@@ -123,17 +123,17 @@ export default function AdminAbout() {
             <div className="flex items-start justify-between">
               <div className="flex-1">
                 <div className="flex items-center gap-3 mb-2">
-                  <span className="font-sans text-[10px] text-text-secondary uppercase bg-[rgba(168,164,154,0.08)] px-2 py-0.5">
+                  <span className="font-sans text-[10px] text-fg-secondary uppercase bg-[rgba(168,164,154,0.08)] px-2 py-0.5">
                     {s.id}
                   </span>
                   <h3 className="font-serif text-sm font-medium text-mist">{s.title}</h3>
                 </div>
-                <p className="font-serif text-xs text-text-secondary/70 leading-relaxed whitespace-pre-line line-clamp-2">
+                <p className="font-serif text-xs text-fg-secondary/70 leading-relaxed whitespace-pre-line line-clamp-2">
                   {s.content}
                 </p>
               </div>
               <button onClick={() => openEdit(s)}
-                className="font-sans text-[10px] text-text-secondary hover:text-mist transition-colors shrink-0 ml-4">
+                className="font-sans text-[10px] text-fg-secondary hover:text-mist transition-colors shrink-0 ml-4">
                 Edit
               </button>
             </div>

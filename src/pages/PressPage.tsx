@@ -22,6 +22,10 @@ export default function PressPage() {
   const kit = items.filter((i) => i.type === 'kit');
   const releases = items.filter((i) => i.type === 'release');
 
+  // 占位或空链接不渲染为超链接，避免点击跳到无效地址
+  const isPlaceholderUrl = (url?: string) =>
+    !url || url === '#' || url.startsWith('https://example.com');
+
   return (
     <div className="bg-base min-h-screen pt-20 md:pt-28" data-theme="paper">
       <SEO
@@ -123,21 +127,34 @@ export default function PressPage() {
           <h2 className="text-overline text-fg-muted mb-8">IN THE MEDIA · 媒体报道</h2>
           {coverage.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-              {coverage.map((c) => (
-                <a
-                  key={c.id}
-                  href={c.url || '#'}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="card-lift group block border border-line bg-raised/60 p-6 hover:border-accent transition-colors duration-300"
-                >
-                  <span className="block text-overline text-fg-muted mb-4">{c.source}</span>
-                  <h3 className="font-serif text-h2 text-fg leading-snug mb-4">{c.title}</h3>
-                  <span className="inline-flex items-center gap-2 text-caption-s text-fg-muted group-hover:text-accent transition-colors mt-auto">
-                    阅读全文 →
-                  </span>
-                </a>
-              ))}
+              {coverage.map((c) =>
+                isPlaceholderUrl(c.url) ? (
+                  <div
+                    key={c.id}
+                    className="card-lift block border border-line bg-raised/60 p-6"
+                  >
+                    <span className="block text-overline text-fg-muted mb-4">{c.source}</span>
+                    <h3 className="font-serif text-h2 text-fg leading-snug mb-4">{c.title}</h3>
+                    <span className="inline-flex items-center gap-2 text-caption-s text-fg-muted mt-auto">
+                      报道链接待更新
+                    </span>
+                  </div>
+                ) : (
+                  <a
+                    key={c.id}
+                    href={c.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="card-lift group block border border-line bg-raised/60 p-6 hover:border-accent transition-colors duration-300"
+                  >
+                    <span className="block text-overline text-fg-muted mb-4">{c.source}</span>
+                    <h3 className="font-serif text-h2 text-fg leading-snug mb-4">{c.title}</h3>
+                    <span className="inline-flex items-center gap-2 text-caption-s text-fg-muted group-hover:text-accent transition-colors mt-auto">
+                      阅读全文 →
+                    </span>
+                  </a>
+                )
+              )}
             </div>
           ) : (
             <div className="border border-dashed border-line-strong p-10 text-center">

@@ -31,7 +31,7 @@ export default function CollectionPage() {
       {/* Hero */}
       <div ref={titleRef} className="px-6 md:px-12 py-16 md:py-24">
         <div className="max-w-[1440px] mx-auto">
-          <p className="font-sans text-[11px] tracking-[0.2em] text-text-secondary uppercase mb-6">
+          <p className="font-sans text-[11px] tracking-[0.2em] text-fg-secondary uppercase mb-6">
             COLLECTION
           </p>
           <h1 className="font-display text-[clamp(36px,5vw,64px)] font-light text-mist tracking-wide">
@@ -50,7 +50,7 @@ export default function CollectionPage() {
               className={`font-sans text-[11px] tracking-[0.15em] uppercase px-2 py-2 border-b transition-all duration-300 min-h-[44px] flex items-center ${
                 activeFilter === cat
                   ? 'text-mist border-mist'
-                  : 'text-text-secondary border-transparent hover:text-mist hover:border-text-secondary'
+                  : 'text-fg-secondary border-transparent hover:text-mist hover:border-text-secondary'
               }`}
             >
               {cat}
@@ -88,12 +88,12 @@ export default function CollectionPage() {
                     {item.title}
                   </h3>
                   {item.subtitle && (
-                    <p className="mt-1 font-sans text-[11px] text-text-secondary tracking-wide">
+                    <p className="mt-1 font-sans text-[11px] text-fg-secondary tracking-wide">
                       {item.subtitle}
                     </p>
                   )}
                 </div>
-                <span className="font-sans text-[10px] tracking-[0.1em] text-text-secondary">
+                <span className="font-sans text-[10px] tracking-[0.1em] text-fg-secondary">
                   {item.category}
                 </span>
               </div>
@@ -101,7 +101,7 @@ export default function CollectionPage() {
                 {item.tags.map((tag) => (
                   <span
                     key={tag}
-                    className="font-sans text-[10px] tracking-wide text-text-secondary/60 border border-[rgba(168,164,154,0.18)] px-2 py-0.5"
+                    className="font-sans text-[10px] tracking-wide text-fg-secondary/60 border border-[rgba(168,164,154,0.18)] px-2 py-0.5"
                   >
                     {tag}
                   </span>

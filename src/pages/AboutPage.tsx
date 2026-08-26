@@ -27,7 +27,7 @@ export default function AboutPage() {
 
   const renderContent = (content: string) =>
     content.split('\n').filter(p => p.trim()).map((line, i) => (
-      <p key={i} className="font-serif text-[15px] text-text-secondary leading-[1.8]">{line}</p>
+      <p key={i} className="font-serif text-[15px] text-fg-secondary leading-[1.8]">{line}</p>
     ));
 
   return (
@@ -40,7 +40,7 @@ export default function AboutPage() {
       {/* Hero */}
       <div ref={titleRef} className="px-6 md:px-12 py-16 md:py-24">
         <div className="max-w-[1440px] mx-auto">
-          <p className="font-sans text-[11px] tracking-[0.2em] text-text-secondary uppercase mb-6">
+          <p className="font-sans text-[11px] tracking-[0.2em] text-fg-secondary uppercase mb-6">
             ABOUT US
           </p>
           <h1 className="font-display text-[clamp(36px,5vw,64px)] font-light text-mist tracking-wide leading-tight max-w-3xl">
@@ -77,7 +77,7 @@ export default function AboutPage() {
                             if (i === 0) {
                               return <h3 key={i} className="font-serif text-base font-medium text-mist">{line.replace(/^\d+\.\s*/, '')}</h3>;
                             }
-                            return <p key={i} className="font-serif text-sm text-text-secondary leading-[1.8]">{line}</p>;
+                            return <p key={i} className="font-serif text-sm text-fg-secondary leading-[1.8]">{line}</p>;
                           })}
                         </div>
                       </div>
@@ -99,8 +99,8 @@ export default function AboutPage() {
                       const desc = lines.slice(1).join('\n');
                       return (
                         <div key={idx} className={`border-l-2 ${borderColors[idx] || 'border-l-cinnabar'} pl-6`}>
-                          <span className="font-sans text-[11px] tracking-[0.15em] text-text-secondary uppercase">{period}</span>
-                          <p className="mt-2 font-serif text-sm text-text-secondary leading-[1.8]">{desc}</p>
+                          <span className="font-sans text-[11px] tracking-[0.15em] text-fg-secondary uppercase">{period}</span>
+                          <p className="mt-2 font-serif text-sm text-fg-secondary leading-[1.8]">{desc}</p>
                         </div>
                       );
                     })}

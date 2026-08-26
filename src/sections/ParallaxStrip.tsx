@@ -58,7 +58,7 @@ export default function ParallaxStrip() {
         className="whitespace-nowrap mb-2"
         style={{ width: 'max-content' }}
       >
-        <span className="font-display text-[clamp(60px,10vw,140px)] font-light text-text-secondary/20 tracking-wide">
+        <span className="font-display text-[clamp(60px,10vw,140px)] font-light text-fg-secondary/20 tracking-wide">
           {textLine1.repeat(3)}
         </span>
       </div>

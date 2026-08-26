@@ -345,6 +345,16 @@
     text-transform: uppercase;
   }
 
+  /* ─── Opacity-tinted secondary text ───
+     Tailwind v3.4 无法对纯 rgba() CSS 变量颜色生成 /<alpha> 修饰，
+     这里用 color-mix 显式补上，使 text-fg-secondary/<n> 按设计意图生效。 */
+  .text-fg-secondary\/20 { color: color-mix(in srgb, var(--fg-secondary) 20%, transparent); }
+  .text-fg-secondary\/30 { color: color-mix(in srgb, var(--fg-secondary) 30%, transparent); }
+  .text-fg-secondary\/40 { color: color-mix(in srgb, var(--fg-secondary) 40%, transparent); }
+  .text-fg-secondary\/50 { color: color-mix(in srgb, var(--fg-secondary) 50%, transparent); }
+  .text-fg-secondary\/60 { color: color-mix(in srgb, var(--fg-secondary) 60%, transparent); }
+  .text-fg-secondary\/70 { color: color-mix(in srgb, var(--fg-secondary) 70%, transparent); }
+
   /* ─── 3D perspective utilities ─── */
   .perspective-800 { perspective: 800px; }
   .perspective-1200 { perspective: 1200px; }

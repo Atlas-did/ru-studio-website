@@ -28,13 +28,13 @@ export default function AdminAnalytics() {
   }, []);
 
   if (!data) {
-    return <p className="font-sans text-xs text-text-secondary">加载统计中…</p>;
+    return <p className="font-sans text-xs text-fg-secondary">加载统计中…</p>;
   }
 
   return (
     <div>
       <h1 className="font-display text-2xl text-mist mb-2">访问统计</h1>
-      <p className="font-sans text-xs text-text-secondary mb-8">
+      <p className="font-sans text-xs text-fg-secondary mb-8">
         自托管、无 Cookie 的轻量统计。近 30 天数据。
       </p>
 
@@ -46,7 +46,7 @@ export default function AdminAnalytics() {
           { label: '订阅人数', value: data.subscribers },
         ].map((c) => (
           <div key={c.label} className="border border-[rgba(168,164,154,0.15)] p-5">
-            <span className="block font-sans text-[10px] tracking-wider text-text-secondary uppercase mb-2">{c.label}</span>
+            <span className="block font-sans text-[10px] tracking-wider text-fg-secondary uppercase mb-2">{c.label}</span>
             <span className="font-display text-3xl text-mist">{c.value}</span>
           </div>
         ))}
@@ -54,7 +54,7 @@ export default function AdminAnalytics() {
 
       {/* Daily trend */}
       <section className="mb-10">
-        <h2 className="font-sans text-xs tracking-wider text-text-secondary uppercase mb-4">每日浏览趋势</h2>
+        <h2 className="font-sans text-xs tracking-wider text-fg-secondary uppercase mb-4">每日浏览趋势</h2>
         <div style={{ width: '100%', height: 220 }}>
           <ResponsiveContainer>
             <AreaChart data={data.byDay} margin={{ top: 5, right: 10, bottom: 5, left: -20 }}>
@@ -80,7 +80,7 @@ export default function AdminAnalytics() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
         {/* Top pages */}
         <section>
-          <h2 className="font-sans text-xs tracking-wider text-text-secondary uppercase mb-4">热门页面 Top 10</h2>
+          <h2 className="font-sans text-xs tracking-wider text-fg-secondary uppercase mb-4">热门页面 Top 10</h2>
           <div style={{ width: '100%', height: 260 }}>
             <ResponsiveContainer>
               <BarChart data={data.topPaths} layout="vertical" margin={{ top: 0, right: 20, bottom: 0, left: 40 }}>
@@ -98,7 +98,7 @@ export default function AdminAnalytics() {
 
         {/* Referrers */}
         <section>
-          <h2 className="font-sans text-xs tracking-wider text-text-secondary uppercase mb-4">来源分布</h2>
+          <h2 className="font-sans text-xs tracking-wider text-fg-secondary uppercase mb-4">来源分布</h2>
           <ul className="space-y-2">
             {data.topReferrers.map((r) => {
               const max = data.topReferrers[0]?.count || 1;
@@ -106,7 +106,7 @@ export default function AdminAnalytics() {
                 <li key={r.referrer}>
                   <div className="flex justify-between font-sans text-xs text-mist mb-1">
                     <span className="truncate mr-4">{r.referrer}</span>
-                    <span className="text-text-secondary shrink-0">{r.count}</span>
+                    <span className="text-fg-secondary shrink-0">{r.count}</span>
                   </div>
                   <div className="h-1 bg-[rgba(168,164,154,0.1)]">
                     <div className="h-full bg-cinnabar/70" style={{ width: `${(r.count / max) * 100}%` }} />
@@ -115,7 +115,7 @@ export default function AdminAnalytics() {
               );
             })}
             {data.topReferrers.length === 0 && (
-              <li className="font-sans text-xs text-text-secondary">暂无来源数据</li>
+              <li className="font-sans text-xs text-fg-secondary">暂无来源数据</li>
             )}
           </ul>
         </section>

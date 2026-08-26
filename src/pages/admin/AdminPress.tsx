@@ -63,7 +63,7 @@ export default function AdminPress() {
   return (
     <div>
       <h1 className="font-display text-2xl text-mist mb-2">媒体中心管理</h1>
-      <p className="font-sans text-xs text-text-secondary mb-8">
+      <p className="font-sans text-xs text-fg-secondary mb-8">
         管理媒体报道（coverage）、新闻稿（release）与资料包下载（kit）。
       </p>
 
@@ -71,7 +71,7 @@ export default function AdminPress() {
       <form onSubmit={onSave} className="border border-[rgba(168,164,154,0.15)] p-6 mb-10 space-y-4">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
-            <label className="block font-sans text-[10px] tracking-[0.12em] text-text-secondary uppercase mb-2">ID *</label>
+            <label className="block font-sans text-[10px] tracking-[0.12em] text-fg-secondary uppercase mb-2">ID *</label>
             <input
               value={form.id}
               onChange={(e) => setForm({ ...form, id: e.target.value })}
@@ -81,7 +81,7 @@ export default function AdminPress() {
             />
           </div>
           <div>
-            <label className="block font-sans text-[10px] tracking-[0.12em] text-text-secondary uppercase mb-2">类型</label>
+            <label className="block font-sans text-[10px] tracking-[0.12em] text-fg-secondary uppercase mb-2">类型</label>
             <select
               value={form.type}
               onChange={(e) => setForm({ ...form, type: e.target.value })}
@@ -93,7 +93,7 @@ export default function AdminPress() {
             </select>
           </div>
           <div>
-            <label className="block font-sans text-[10px] tracking-[0.12em] text-text-secondary uppercase mb-2">日期</label>
+            <label className="block font-sans text-[10px] tracking-[0.12em] text-fg-secondary uppercase mb-2">日期</label>
             <input
               type="date"
               value={form.date}
@@ -104,7 +104,7 @@ export default function AdminPress() {
         </div>
 
         <div>
-          <label className="block font-sans text-[10px] tracking-[0.12em] text-text-secondary uppercase mb-2">标题 *</label>
+          <label className="block font-sans text-[10px] tracking-[0.12em] text-fg-secondary uppercase mb-2">标题 *</label>
           <input
             value={form.title}
             onChange={(e) => setForm({ ...form, title: e.target.value })}
@@ -115,7 +115,7 @@ export default function AdminPress() {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
-            <label className="block font-sans text-[10px] tracking-[0.12em] text-text-secondary uppercase mb-2">链接 URL</label>
+            <label className="block font-sans text-[10px] tracking-[0.12em] text-fg-secondary uppercase mb-2">链接 URL</label>
             <input
               value={form.url}
               onChange={(e) => setForm({ ...form, url: e.target.value })}
@@ -124,7 +124,7 @@ export default function AdminPress() {
             />
           </div>
           <div>
-            <label className="block font-sans text-[10px] tracking-[0.12em] text-text-secondary uppercase mb-2">文件 URL（kit 用）</label>
+            <label className="block font-sans text-[10px] tracking-[0.12em] text-fg-secondary uppercase mb-2">文件 URL（kit 用）</label>
             <input
               value={form.file_url}
               onChange={(e) => setForm({ ...form, file_url: e.target.value })}
@@ -133,7 +133,7 @@ export default function AdminPress() {
             />
           </div>
           <div>
-            <label className="block font-sans text-[10px] tracking-[0.12em] text-text-secondary uppercase mb-2">来源 / 媒体名</label>
+            <label className="block font-sans text-[10px] tracking-[0.12em] text-fg-secondary uppercase mb-2">来源 / 媒体名</label>
             <input
               value={form.source}
               onChange={(e) => setForm({ ...form, source: e.target.value })}
@@ -150,7 +150,7 @@ export default function AdminPress() {
             <button
               type="button"
               onClick={() => { setEditing(null); setForm(emptyForm); }}
-              className="font-sans text-xs text-text-secondary hover:text-mist transition-colors"
+              className="font-sans text-xs text-fg-secondary hover:text-mist transition-colors"
             >
               取消编辑
             </button>
@@ -166,20 +166,20 @@ export default function AdminPress() {
             <div className="min-w-0">
               <span className="font-sans text-[9px] tracking-wider text-cinnabar uppercase mr-3">{item.type}</span>
               <span className="font-serif text-sm text-mist">{item.title}</span>
-              <span className="font-sans text-[10px] text-text-secondary ml-3">{item.date}</span>
+              <span className="font-sans text-[10px] text-fg-secondary ml-3">{item.date}</span>
             </div>
             <div className="flex gap-4 shrink-0">
-              <button onClick={() => startEdit(item)} className="font-sans text-[10px] text-text-secondary hover:text-mist uppercase tracking-wider">
+              <button onClick={() => startEdit(item)} className="font-sans text-[10px] text-fg-secondary hover:text-mist uppercase tracking-wider">
                 Edit
               </button>
-              <button onClick={() => onDelete(item.id)} className="font-sans text-[10px] text-text-secondary hover:text-cinnabar uppercase tracking-wider">
+              <button onClick={() => onDelete(item.id)} className="font-sans text-[10px] text-fg-secondary hover:text-cinnabar uppercase tracking-wider">
                 Delete
               </button>
             </div>
           </div>
         ))}
         {items.length === 0 && (
-          <p className="font-sans text-xs text-text-secondary">暂无条目，使用上方表单创建。</p>
+          <p className="font-sans text-xs text-fg-secondary">暂无条目，使用上方表单创建。</p>
         )}
       </div>
     </div>

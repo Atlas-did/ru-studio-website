@@ -78,7 +78,7 @@ export default function AdminConcepts() {
   };
 
   if (loading) {
-    return <p className="font-serif text-sm text-text-secondary">Loading...</p>;
+    return <p className="font-serif text-sm text-fg-secondary">Loading...</p>;
   }
 
   return (
@@ -86,7 +86,7 @@ export default function AdminConcepts() {
       <div className="flex items-center justify-between mb-8">
         <div>
           <h1 className="font-display text-2xl text-mist tracking-wide">Concepts</h1>
-          <p className="mt-1 font-sans text-[11px] tracking-[0.15em] text-text-secondary uppercase">
+          <p className="mt-1 font-sans text-[11px] tracking-[0.15em] text-fg-secondary uppercase">
             核心概念管理
           </p>
         </div>
@@ -112,7 +112,7 @@ export default function AdminConcepts() {
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
             <div>
-              <label className="block font-sans text-[10px] tracking-[0.1em] text-text-secondary uppercase mb-1">ID</label>
+              <label className="block font-sans text-[10px] tracking-[0.1em] text-fg-secondary uppercase mb-1">ID</label>
               <input
                 type="text"
                 value={form.id}
@@ -122,7 +122,7 @@ export default function AdminConcepts() {
               />
             </div>
             <div>
-              <label className="block font-sans text-[10px] tracking-[0.1em] text-text-secondary uppercase mb-1">序号</label>
+              <label className="block font-sans text-[10px] tracking-[0.1em] text-fg-secondary uppercase mb-1">序号</label>
               <input
                 type="text"
                 value={form.numeral}
@@ -131,7 +131,7 @@ export default function AdminConcepts() {
               />
             </div>
             <div>
-              <label className="block font-sans text-[10px] tracking-[0.1em] text-text-secondary uppercase mb-1">标题（中文）</label>
+              <label className="block font-sans text-[10px] tracking-[0.1em] text-fg-secondary uppercase mb-1">标题（中文）</label>
               <input
                 type="text"
                 value={form.title}
@@ -140,7 +140,7 @@ export default function AdminConcepts() {
               />
             </div>
             <div>
-              <label className="block font-sans text-[10px] tracking-[0.1em] text-text-secondary uppercase mb-1">标题（英文）</label>
+              <label className="block font-sans text-[10px] tracking-[0.1em] text-fg-secondary uppercase mb-1">标题（英文）</label>
               <input
                 type="text"
                 value={form.title_en}
@@ -149,7 +149,7 @@ export default function AdminConcepts() {
               />
             </div>
             <div className="md:col-span-2">
-              <label className="block font-sans text-[10px] tracking-[0.1em] text-text-secondary uppercase mb-1">描述</label>
+              <label className="block font-sans text-[10px] tracking-[0.1em] text-fg-secondary uppercase mb-1">描述</label>
               <textarea
                 value={form.description}
                 onChange={(e) => setForm({ ...form, description: e.target.value })}
@@ -167,7 +167,7 @@ export default function AdminConcepts() {
             </button>
             <button
               onClick={() => { setEditing(null); setCreating(false); }}
-              className="font-sans text-[10px] tracking-[0.15em] text-text-secondary border border-[rgba(168,164,154,0.3)] px-5 py-2 hover:text-mist transition-colors uppercase"
+              className="font-sans text-[10px] tracking-[0.15em] text-fg-secondary border border-[rgba(168,164,154,0.3)] px-5 py-2 hover:text-mist transition-colors uppercase"
             >
               Cancel
             </button>
@@ -180,32 +180,32 @@ export default function AdminConcepts() {
         <table className="w-full">
           <thead>
             <tr className="border-b border-[rgba(168,164,154,0.12)]">
-              <th className="text-left py-3 font-sans text-[10px] tracking-[0.1em] text-text-secondary uppercase w-16">ID</th>
-              <th className="text-left py-3 font-sans text-[10px] tracking-[0.1em] text-text-secondary uppercase w-12">#</th>
-              <th className="text-left py-3 font-sans text-[10px] tracking-[0.1em] text-text-secondary uppercase">标题</th>
-              <th className="text-left py-3 font-sans text-[10px] tracking-[0.1em] text-text-secondary uppercase">英文</th>
-              <th className="text-left py-3 font-sans text-[10px] tracking-[0.1em] text-text-secondary uppercase">描述</th>
-              <th className="text-right py-3 font-sans text-[10px] tracking-[0.1em] text-text-secondary uppercase w-24">操作</th>
+              <th className="text-left py-3 font-sans text-[10px] tracking-[0.1em] text-fg-secondary uppercase w-16">ID</th>
+              <th className="text-left py-3 font-sans text-[10px] tracking-[0.1em] text-fg-secondary uppercase w-12">#</th>
+              <th className="text-left py-3 font-sans text-[10px] tracking-[0.1em] text-fg-secondary uppercase">标题</th>
+              <th className="text-left py-3 font-sans text-[10px] tracking-[0.1em] text-fg-secondary uppercase">英文</th>
+              <th className="text-left py-3 font-sans text-[10px] tracking-[0.1em] text-fg-secondary uppercase">描述</th>
+              <th className="text-right py-3 font-sans text-[10px] tracking-[0.1em] text-fg-secondary uppercase w-24">操作</th>
             </tr>
           </thead>
           <tbody>
             {concepts.map((c) => (
               <tr key={c.id} className="border-b border-[rgba(168,164,154,0.06)] hover:bg-[rgba(168,164,154,0.03)] transition-colors">
-                <td className="py-3 font-mono text-xs text-text-secondary/60">{c.id}</td>
+                <td className="py-3 font-mono text-xs text-fg-secondary/60">{c.id}</td>
                 <td className="py-3 font-display text-lg text-mist/30">{c.numeral}</td>
                 <td className="py-3 font-serif text-sm text-mist">{c.title}</td>
-                <td className="py-3 font-sans text-xs text-text-secondary">{c.title_en}</td>
-                <td className="py-3 font-serif text-xs text-text-secondary/70 max-w-xs truncate">{c.description}</td>
+                <td className="py-3 font-sans text-xs text-fg-secondary">{c.title_en}</td>
+                <td className="py-3 font-serif text-xs text-fg-secondary/70 max-w-xs truncate">{c.description}</td>
                 <td className="py-3 text-right">
                   <button
                     onClick={() => openEdit(c)}
-                    className="font-sans text-[10px] text-text-secondary hover:text-mist transition-colors mr-3"
+                    className="font-sans text-[10px] text-fg-secondary hover:text-mist transition-colors mr-3"
                   >
                     Edit
                   </button>
                   <button
                     onClick={() => handleDelete(c.id)}
-                    className="font-sans text-[10px] text-text-secondary/50 hover:text-cinnabar transition-colors"
+                    className="font-sans text-[10px] text-fg-secondary/50 hover:text-cinnabar transition-colors"
                   >
                     Del
                   </button>

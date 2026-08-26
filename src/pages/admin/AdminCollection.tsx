@@ -117,19 +117,19 @@ export default function AdminCollection() {
   };
 
   if (loading) {
-    return <p className="font-serif text-sm text-text-secondary">Loading...</p>;
+    return <p className="font-serif text-sm text-fg-secondary">Loading...</p>;
   }
 
   const FormFields = () => (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
       <div>
-        <label className="block font-sans text-[10px] tracking-[0.1em] text-text-secondary uppercase mb-1">Slug</label>
+        <label className="block font-sans text-[10px] tracking-[0.1em] text-fg-secondary uppercase mb-1">Slug</label>
         <input type="text" value={form.slug} disabled={!creating}
           onChange={(e) => setForm({ ...form, slug: e.target.value })}
           className="w-full bg-[rgba(168,164,154,0.06)] border border-[rgba(168,164,154,0.15)] px-3 py-2 font-mono text-xs text-mist focus:outline-none focus:border-cinnabar disabled:opacity-40" />
       </div>
       <div>
-        <label className="block font-sans text-[10px] tracking-[0.1em] text-text-secondary uppercase mb-1">分类</label>
+        <label className="block font-sans text-[10px] tracking-[0.1em] text-fg-secondary uppercase mb-1">分类</label>
         <select value={form.category}
           onChange={(e) => setForm({ ...form, category: e.target.value })}
           className="w-full bg-[rgba(168,164,154,0.06)] border border-[rgba(168,164,154,0.15)] px-3 py-2 font-serif text-sm text-mist focus:outline-none focus:border-cinnabar">
@@ -137,31 +137,31 @@ export default function AdminCollection() {
         </select>
       </div>
       <div>
-        <label className="block font-sans text-[10px] tracking-[0.1em] text-text-secondary uppercase mb-1">作品名称</label>
+        <label className="block font-sans text-[10px] tracking-[0.1em] text-fg-secondary uppercase mb-1">作品名称</label>
         <input type="text" value={form.title}
           onChange={(e) => setForm({ ...form, title: e.target.value })}
           className="w-full bg-[rgba(168,164,154,0.06)] border border-[rgba(168,164,154,0.15)] px-3 py-2 font-serif text-sm text-mist focus:outline-none focus:border-cinnabar" />
       </div>
       <div>
-        <label className="block font-sans text-[10px] tracking-[0.1em] text-text-secondary uppercase mb-1">副标题（英文）</label>
+        <label className="block font-sans text-[10px] tracking-[0.1em] text-fg-secondary uppercase mb-1">副标题（英文）</label>
         <input type="text" value={form.subtitle}
           onChange={(e) => setForm({ ...form, subtitle: e.target.value })}
           className="w-full bg-[rgba(168,164,154,0.06)] border border-[rgba(168,164,154,0.15)] px-3 py-2 font-sans text-sm text-mist focus:outline-none focus:border-cinnabar" />
       </div>
       <div>
-        <label className="block font-sans text-[10px] tracking-[0.1em] text-text-secondary uppercase mb-1">年份</label>
+        <label className="block font-sans text-[10px] tracking-[0.1em] text-fg-secondary uppercase mb-1">年份</label>
         <input type="number" value={form.year}
           onChange={(e) => setForm({ ...form, year: parseInt(e.target.value) || 2024 })}
           className="w-full bg-[rgba(168,164,154,0.06)] border border-[rgba(168,164,154,0.15)] px-3 py-2 font-mono text-sm text-mist focus:outline-none focus:border-cinnabar" />
       </div>
       <div>
-        <label className="block font-sans text-[10px] tracking-[0.1em] text-text-secondary uppercase mb-1">标签（逗号分隔）</label>
+        <label className="block font-sans text-[10px] tracking-[0.1em] text-fg-secondary uppercase mb-1">标签（逗号分隔）</label>
         <input type="text" value={form.tags.join(', ')}
           onChange={(e) => setForm({ ...form, tags: e.target.value.split(',').map(t => t.trim()).filter(Boolean) })}
           className="w-full bg-[rgba(168,164,154,0.06)] border border-[rgba(168,164,154,0.15)] px-3 py-2 font-serif text-sm text-mist focus:outline-none focus:border-cinnabar" />
       </div>
       <div className="md:col-span-2">
-        <label className="block font-sans text-[10px] tracking-[0.1em] text-text-secondary uppercase mb-1">封面图片</label>
+        <label className="block font-sans text-[10px] tracking-[0.1em] text-fg-secondary uppercase mb-1">封面图片</label>
         <div className="flex gap-3 items-start">
           <input type="text" value={form.cover_url}
             onChange={(e) => setForm({ ...form, cover_url: e.target.value })}
@@ -178,13 +178,13 @@ export default function AdminCollection() {
         )}
       </div>
       <div className="md:col-span-2">
-        <label className="block font-sans text-[10px] tracking-[0.1em] text-text-secondary uppercase mb-1">Alt 文本</label>
+        <label className="block font-sans text-[10px] tracking-[0.1em] text-fg-secondary uppercase mb-1">Alt 文本</label>
         <input type="text" value={form.cover_alt}
           onChange={(e) => setForm({ ...form, cover_alt: e.target.value })}
           className="w-full bg-[rgba(168,164,154,0.06)] border border-[rgba(168,164,154,0.15)] px-3 py-2 font-serif text-sm text-mist focus:outline-none focus:border-cinnabar" />
       </div>
       <div className="md:col-span-2">
-        <label className="block font-sans text-[10px] tracking-[0.1em] text-text-secondary uppercase mb-1">
+        <label className="block font-sans text-[10px] tracking-[0.1em] text-fg-secondary uppercase mb-1">
           作品详情（换行分段，用于详情页展示）
         </label>
         <textarea value={form.content} rows={8}
@@ -193,7 +193,7 @@ export default function AdminCollection() {
           placeholder="输入作品详细介绍，换行即分段..." />
       </div>
       <div className="md:col-span-2">
-        <label className="block font-sans text-[10px] tracking-[0.1em] text-text-secondary uppercase mb-1">
+        <label className="block font-sans text-[10px] tracking-[0.1em] text-fg-secondary uppercase mb-1">
           画廊多图（每行一个图片 URL）
         </label>
         <textarea
@@ -203,7 +203,7 @@ export default function AdminCollection() {
           placeholder={'/uploads/xxx1.jpg\n/uploads/xxx2.jpg'} />
       </div>
       <div className="md:col-span-2">
-        <label className="block font-sans text-[10px] tracking-[0.1em] text-text-secondary uppercase mb-1">视频 URL（可选）</label>
+        <label className="block font-sans text-[10px] tracking-[0.1em] text-fg-secondary uppercase mb-1">视频 URL（可选）</label>
         <input type="text" value={form.video_url || ''}
           onChange={(e) => setForm({ ...form, video_url: e.target.value })}
           placeholder="/uploads/demo.mp4 或外链"
@@ -213,19 +213,19 @@ export default function AdminCollection() {
         <span className="block font-sans text-[10px] tracking-[0.15em] text-gold uppercase mb-3">English Content（双语站字段）</span>
       </div>
       <div>
-        <label className="block font-sans text-[10px] tracking-[0.1em] text-text-secondary uppercase mb-1">Title EN</label>
+        <label className="block font-sans text-[10px] tracking-[0.1em] text-fg-secondary uppercase mb-1">Title EN</label>
         <input type="text" value={form.title_en || ''}
           onChange={(e) => setForm({ ...form, title_en: e.target.value })}
           className="w-full bg-[rgba(168,164,154,0.06)] border border-[rgba(168,164,154,0.15)] px-3 py-2 font-sans text-sm text-mist focus:outline-none focus:border-cinnabar" />
       </div>
       <div>
-        <label className="block font-sans text-[10px] tracking-[0.1em] text-text-secondary uppercase mb-1">Subtitle EN</label>
+        <label className="block font-sans text-[10px] tracking-[0.1em] text-fg-secondary uppercase mb-1">Subtitle EN</label>
         <input type="text" value={form.subtitle_en || ''}
           onChange={(e) => setForm({ ...form, subtitle_en: e.target.value })}
           className="w-full bg-[rgba(168,164,154,0.06)] border border-[rgba(168,164,154,0.15)] px-3 py-2 font-sans text-sm text-mist focus:outline-none focus:border-cinnabar" />
       </div>
       <div className="md:col-span-2">
-        <label className="block font-sans text-[10px] tracking-[0.1em] text-text-secondary uppercase mb-1">Content EN</label>
+        <label className="block font-sans text-[10px] tracking-[0.1em] text-fg-secondary uppercase mb-1">Content EN</label>
         <textarea value={form.content_en || ''} rows={5}
           onChange={(e) => setForm({ ...form, content_en: e.target.value })}
           className="w-full bg-[rgba(168,164,154,0.06)] border border-[rgba(168,164,154,0.15)] px-3 py-2 font-sans text-sm text-mist focus:outline-none focus:border-cinnabar resize-y leading-relaxed"
@@ -239,7 +239,7 @@ export default function AdminCollection() {
       <div className="flex items-center justify-between mb-8">
         <div>
           <h1 className="font-display text-2xl text-mist tracking-wide">Collection</h1>
-          <p className="mt-1 font-sans text-[11px] tracking-[0.15em] text-text-secondary uppercase">作品收藏管理</p>
+          <p className="mt-1 font-sans text-[11px] tracking-[0.15em] text-fg-secondary uppercase">作品收藏管理</p>
         </div>
         <button onClick={openCreate}
           className="font-sans text-[11px] tracking-[0.15em] text-mist border border-mist/60 px-4 py-2 hover:bg-cinnabar hover:border-cinnabar transition-all uppercase">
@@ -259,7 +259,7 @@ export default function AdminCollection() {
             <button onClick={handleSave}
               className="font-sans text-[10px] tracking-[0.15em] text-mist bg-cinnabar px-5 py-2 hover:opacity-80 transition-opacity uppercase">Save</button>
             <button onClick={() => { setEditing(null); setCreating(false); }}
-              className="font-sans text-[10px] tracking-[0.15em] text-text-secondary border border-[rgba(168,164,154,0.3)] px-5 py-2 hover:text-mist transition-colors uppercase">Cancel</button>
+              className="font-sans text-[10px] tracking-[0.15em] text-fg-secondary border border-[rgba(168,164,154,0.3)] px-5 py-2 hover:text-mist transition-colors uppercase">Cancel</button>
           </div>
         </div>
       )}
@@ -268,18 +268,18 @@ export default function AdminCollection() {
         <table className="w-full">
           <thead>
             <tr className="border-b border-[rgba(168,164,154,0.12)]">
-              <th className="text-left py-3 font-sans text-[10px] tracking-[0.1em] text-text-secondary uppercase">Slug</th>
-              <th className="text-left py-3 font-sans text-[10px] tracking-[0.1em] text-text-secondary uppercase">封面</th>
-              <th className="text-left py-3 font-sans text-[10px] tracking-[0.1em] text-text-secondary uppercase">名称</th>
-              <th className="text-left py-3 font-sans text-[10px] tracking-[0.1em] text-text-secondary uppercase">分类</th>
-              <th className="text-left py-3 font-sans text-[10px] tracking-[0.1em] text-text-secondary uppercase">年份</th>
-              <th className="text-right py-3 font-sans text-[10px] tracking-[0.1em] text-text-secondary uppercase w-24">操作</th>
+              <th className="text-left py-3 font-sans text-[10px] tracking-[0.1em] text-fg-secondary uppercase">Slug</th>
+              <th className="text-left py-3 font-sans text-[10px] tracking-[0.1em] text-fg-secondary uppercase">封面</th>
+              <th className="text-left py-3 font-sans text-[10px] tracking-[0.1em] text-fg-secondary uppercase">名称</th>
+              <th className="text-left py-3 font-sans text-[10px] tracking-[0.1em] text-fg-secondary uppercase">分类</th>
+              <th className="text-left py-3 font-sans text-[10px] tracking-[0.1em] text-fg-secondary uppercase">年份</th>
+              <th className="text-right py-3 font-sans text-[10px] tracking-[0.1em] text-fg-secondary uppercase w-24">操作</th>
             </tr>
           </thead>
           <tbody>
             {items.map((item) => (
               <tr key={item.slug} className="border-b border-[rgba(168,164,154,0.06)] hover:bg-[rgba(168,164,154,0.03)]">
-                <td className="py-3 font-mono text-xs text-text-secondary/60">{item.slug}</td>
+                <td className="py-3 font-mono text-xs text-fg-secondary/60">{item.slug}</td>
                 <td className="py-3">
                   {item.cover_url && (
                     <img src={item.cover_url} alt="" className="w-12 h-12 object-cover border border-[rgba(168,164,154,0.12)]" />
@@ -287,14 +287,14 @@ export default function AdminCollection() {
                 </td>
                 <td className="py-3 font-serif text-sm text-mist">{item.title}</td>
                 <td className="py-3">
-                  <span className="font-sans text-[10px] text-text-secondary border border-[rgba(168,164,154,0.2)] px-2 py-0.5">{item.category}</span>
+                  <span className="font-sans text-[10px] text-fg-secondary border border-[rgba(168,164,154,0.2)] px-2 py-0.5">{item.category}</span>
                 </td>
-                <td className="py-3 font-sans text-xs text-text-secondary">{item.year}</td>
+                <td className="py-3 font-sans text-xs text-fg-secondary">{item.year}</td>
                 <td className="py-3 text-right">
                   <button onClick={() => openEdit(item)}
-                    className="font-sans text-[10px] text-text-secondary hover:text-mist transition-colors mr-3">Edit</button>
+                    className="font-sans text-[10px] text-fg-secondary hover:text-mist transition-colors mr-3">Edit</button>
                   <button onClick={() => handleDelete(item.slug)}
-                    className="font-sans text-[10px] text-text-secondary/50 hover:text-cinnabar transition-colors">Del</button>
+                    className="font-sans text-[10px] text-fg-secondary/50 hover:text-cinnabar transition-colors">Del</button>
                 </td>
               </tr>
             ))}
