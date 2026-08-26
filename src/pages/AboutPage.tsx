@@ -2,6 +2,7 @@ import { useScrollReveal } from '@/hooks/useScrollReveal';
 import { useSiteData } from '@/hooks/useSiteData';
 import { api } from '@/lib/api';
 import SEO from '@/components/SEO';
+import MediaPlaceholder from '@/components/MediaPlaceholder';
 
 interface AboutSection {
   id: string;
@@ -111,6 +112,22 @@ export default function AboutPage() {
 
             return null;
           })}
+        </div>
+      </div>
+
+      {/* 品牌影像占位 —— 将来放团队 / 工坊 / 城市影像 */}
+      <div className="px-6 md:px-12 pb-24 md:pb-40">
+        <div className="max-w-[1100px] mx-auto">
+          <div className="flex items-end justify-between mb-8">
+            <span className="text-overline text-fg-secondary">FILM — 品牌影像</span>
+            <span className="text-caption-s text-fg-muted">儒意 · 工坊与城市</span>
+          </div>
+          <MediaPlaceholder
+            variant="gallery"
+            label="工坊影像集"
+            sub="STUDIO FILM · IN PREPARATION"
+            caption="关于我们如何造物的影像记录"
+          />
         </div>
       </div>
     </div>

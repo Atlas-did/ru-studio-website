@@ -355,6 +355,134 @@
   .text-fg-secondary\/60 { color: color-mix(in srgb, var(--fg-secondary) 60%, transparent); }
   .text-fg-secondary\/70 { color: color-mix(in srgb, var(--fg-secondary) 70%, transparent); }
 
+  /* ─── Custom cursor — 丹红，双主题（墨/宣）可见 ─── */
+  .cursor-ring {
+    border: 1.5px solid var(--accent);
+    background: transparent;
+    box-shadow:
+      0 0 0 1px rgba(245, 242, 235, 0.14),
+      0 0 14px rgba(139, 26, 26, 0.38);
+    transition: background-color 0.25s var(--ease-smooth), box-shadow 0.25s var(--ease-smooth);
+  }
+  .cursor-ring[data-state='hover'] {
+    background: color-mix(in srgb, var(--accent) 10%, transparent);
+  }
+  .cursor-ring[data-state='view'] {
+    background: color-mix(in srgb, var(--accent) 14%, transparent);
+  }
+  .cursor-ring[data-state='drag'] {
+    border-color: var(--gold);
+    background: color-mix(in srgb, var(--gold) 8%, transparent);
+  }
+  .cursor-ring .cursor-label {
+    display: none;
+    position: absolute;
+    inset: 0;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Inter', -apple-system, sans-serif;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    color: var(--fg);
+    text-shadow: 0 0 6px color-mix(in srgb, var(--bg) 70%, transparent);
+    pointer-events: none;
+  }
+  .cursor-ring[data-state='view'] .cursor-label:nth-child(1) { display: flex; }
+  .cursor-ring[data-state='drag'] .cursor-label:nth-child(2) { display: flex; }
+
+  .cursor-dot {
+    width: 5px;
+    height: 5px;
+    background: var(--accent);
+    box-shadow:
+      0 0 0 1px rgba(245, 242, 235, 0.3),
+      0 0 10px rgba(139, 26, 26, 0.55);
+  }
+
+  /* ─── MediaPlaceholder — 影音/3D 内容占位 ─── */
+  .media-frame {
+    border: 1px solid var(--line-medium);
+    background: var(--bg-raised);
+    transition: box-shadow 0.5s var(--ease-expo-out);
+  }
+  .media-frame:hover {
+    box-shadow: 0 14px 44px rgba(0, 0, 0, 0.22), 0 0 0 1px color-mix(in srgb, var(--accent) 30%, transparent);
+  }
+  /* 占位内纸纹（复用站点颗粒） */
+  .media-grain {
+    opacity: 0.08;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='gn'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23gn)'/%3E%3C/svg%3E");
+    background-repeat: repeat;
+    background-size: 256px 256px;
+  }
+  /* 播放键光晕脉冲：等距扩散的圆环 */
+  .media-play::before,
+  .media-play::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 9999px;
+    border: 1px solid color-mix(in srgb, var(--accent) 45%, transparent);
+    animation: media-pulse 2.6s var(--ease-smooth) infinite;
+    pointer-events: none;
+  }
+  .media-play::after {
+    animation-delay: 1.3s;
+  }
+  .media-frame:hover .media-play::before,
+  .media-frame:hover .media-play::after {
+    animation-duration: 1.6s;
+  }
+  @keyframes media-pulse {
+    0%   { transform: scale(1);   opacity: 0.85; }
+    70%  { transform: scale(1.9); opacity: 0;    }
+    100% { transform: scale(1.9); opacity: 0;    }
+  }
+  /* 尊重减弱动态偏好：禁用脉冲 */
+  @media (prefers-reduced-motion: reduce) {
+    .media-play::before, .media-play::after { animation: none; }
+  }
+
+  /* ─── MarqueeBand — 倾斜滚动文字带 ─── */
+  .marquee {
+    position: relative;
+    isolation: isolate;
+  }
+  .marquee-track {
+    display: flex;
+    width: max-content;
+    animation: marquee-scroll 36s linear infinite;
+    will-change: transform;
+  }
+  .marquee-row {
+    display: inline-flex;
+    align-items: center;
+  }
+  .marquee-item {
+    display: inline-flex;
+    align-items: center;
+    gap: clamp(2rem, 4vw, 3.5rem);
+    padding-right: clamp(2rem, 4vw, 3.5rem);
+    font-family: 'Noto Serif SC', serif;
+    font-size: clamp(28px, 3.2vw, 44px);
+    font-weight: 300;
+    letter-spacing: 0.14em;
+    white-space: nowrap;
+    line-height: 1.2;
+  }
+  .marquee-sep {
+    color: var(--accent);
+    font-size: 0.55em;
+    opacity: 0.8;
+  }
+  @keyframes marquee-scroll {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-50%); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .marquee-track { animation: none; }
+  }
+
   /* ─── 3D perspective utilities ─── */
   .perspective-800 { perspective: 800px; }
   .perspective-1200 { perspective: 1200px; }

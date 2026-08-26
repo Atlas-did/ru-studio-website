@@ -6,6 +6,7 @@ import { getCollectionItems } from '@/lib/data';
 import type { CollectionItem } from '@/lib/data';
 import SEO from '@/components/SEO';
 import Seal from '@/components/Seal';
+import MediaPlaceholder from '@/components/MediaPlaceholder';
 import ImageZoomViewer from '@/components/interactive/ImageZoomViewer';
 import DraggableGallery from '@/components/interactive/DraggableGallery';
 import { useI18n, pick } from '@/lib/i18n';
@@ -213,11 +214,11 @@ export default function CollectionDetailPage() {
         </div>
       </section>
 
-      {/* ─── Video ─── */}
-      {videoUrl && (
-        <section className="px-6 md:px-12 lg:px-16 pb-16 md:pb-24">
-          <div className="max-w-[1100px] mx-auto">
-            <span className="text-overline text-fg-muted mb-6 block">FILM — 影像</span>
+      {/* ─── Video / 影像占位 ─── */}
+      <section className="px-6 md:px-12 lg:px-16 pb-16 md:pb-24">
+        <div className="max-w-[1100px] mx-auto">
+          <span className="text-overline text-fg-muted mb-6 block">FILM — 影像</span>
+          {videoUrl ? (
             <video
               src={videoUrl}
               controls
@@ -225,9 +226,29 @@ export default function CollectionDetailPage() {
               poster={item.cover.url}
               className="w-full aspect-video bg-black border border-line"
             />
-          </div>
-        </section>
-      )}
+          ) : (
+            <MediaPlaceholder
+              variant="film"
+              label="制作过程影像"
+              sub="FILM · IN PRODUCTION"
+              caption="成片后将在此呈现工艺与创作过程"
+            />
+          )}
+        </div>
+      </section>
+
+      {/* ─── 360° / 3D 展示占位 ─── */}
+      <section className="px-6 md:px-12 lg:px-16 pb-16 md:pb-24">
+        <div className="max-w-[1100px] mx-auto">
+          <span className="text-overline text-fg-muted mb-6 block">360° VIEW — 全景展示</span>
+          <MediaPlaceholder
+            variant="model"
+            label="3D 全景展示"
+            sub="3D VIEW · COMING SOON"
+            caption="未来将支持 360° 旋转查看器物细节"
+          />
+        </div>
+      </section>
 
       {/* ─── Story scroll-narrative ─── */}
       {paragraphs.length > 0 && (

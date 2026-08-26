@@ -71,11 +71,18 @@ export default function WorksSection() {
     return () => ctx.revert();
   }, [items]);
 
-  // Curatorial layout: first and third items get larger grid spans
+  // Curatorial layout: first and third items get larger grid spans,
+  // 再对部分卡片加纵向位移，打破横平竖直的规整感（编辑部式错位）
   const getGridClass = (index: number) => {
     if (index === 0) return 'md:col-span-8 md:row-span-2';
     if (index === 2) return 'md:col-span-4 md:row-span-2';
     return 'md:col-span-4';
+  };
+
+  const getStaggerClass = (index: number) => {
+    if (index === 1 || index === 4) return 'md:mt-12';
+    if (index === 3) return 'md:mt-6';
+    return 'md:mt-0';
   };
 
   const getAspectClass = (index: number) => {
@@ -85,7 +92,15 @@ export default function WorksSection() {
   };
 
   return (
-    <section ref={sectionRef} className="relative bg-ink-lighter py-24 md:py-32 lg:py-40">
+    <section ref={sectionRef} className="relative bg-ink-lighter py-24 md:py-32 lg:py-40 overflow-hidden">
+      {/* 左侧巨型竖排侧题字 */}
+      <span
+        aria-hidden="true"
+        className="hidden lg:block absolute left-[3vw] top-1/2 -translate-y-1/2 text-[11vw] font-serif vertical-text select-none pointer-events-none"
+        style={{ color: 'rgba(245,242,235,0.045)' }}
+      >
+        作品选集
+      </span>
       <div className="max-w-[1440px] mx-auto px-6 md:px-12 lg:px-16">
         {/* Section Header */}
         <div ref={headerRef} className="flex items-end justify-between mb-16 md:mb-24">
@@ -121,7 +136,7 @@ export default function WorksSection() {
           {items.map((item, index) => (
             <div
               key={item.slug}
-              className={`work-card ${getGridClass(index)}`}
+              className={`work-card ${getGridClass(index)} ${getStaggerClass(index)}`}
             >
               <TiltCard maxTilt={6} scale={1.01}>
                 <Link
