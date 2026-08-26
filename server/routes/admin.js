@@ -29,14 +29,16 @@ const storage = multer.diskStorage({
 
 const upload = multer({
   storage,
-  limits: { fileSize: 50 * 1024 * 1024 }, // 50MB for video/models
+  limits: { fileSize: 10 * 1024 * 1024 }, // 10MB
   fileFilter: (req, file, cb) => {
-    const ext = path.extname(file.originalname).toLowerCase();
-    const allowed = /\.(jpg|jpeg|png|webp|gif|svg|mp4|webm|mov|glb|gltf|bin)$/i;
-    if (allowed.test(ext)) {
+    // SVG is intentionally disallowed (stored XSS vector)
+    const allowed = /\.(jpg|jpeg|png|webp|gif)$/i;
+    // Also verify declared mime type matches to block double-extension tricks
+    const okMime = /^image\/(jpeg|png|webp|gif)$/i.test(file.mimetype);
+    if (allowed.test(path.extname(file.originalname)) && okMime) {
       cb(null, true);
     } else {
-      cb(new Error('仅支持图片、视频、3D模型格式 (JPG/PNG/WebP/GIF/SVG/MP4/WebM/MOV/GLB/GLTF)'));
+      cb(new Error('仅支持 JPG、PNG、WebP、GIF 格式（不支持 SVG）'));
     }
   },
 });
@@ -65,71 +67,6 @@ router.post('/login', (req, res) => {
   } catch (err) {
     console.error('Login error:', err);
     res.status(500).json({ error: '服务器错误' });
-  }
-});
-
-// ─── GitHub OAuth Login ───
-const GITHUB_CLIENT_ID = process.env.GITHUB_CLIENT_ID;
-const GITHUB_CLIENT_SECRET = process.env.GITHUB_CLIENT_SECRET;
-const GITHUB_REPO = process.env.GITHUB_REPO || 'Atlas-did/ru-studio-website';
-
-router.get('/github/login', (req, res) => {
-  if (!GITHUB_CLIENT_ID) return res.status(400).json({ error: 'GitHub OAuth not configured' });
-  const redirect = `https://github.com/login/oauth/authorize?client_id=${GITHUB_CLIENT_ID}&scope=read:user`;
-  res.redirect(redirect);
-});
-
-router.get('/github/callback', async (req, res) => {
-  try {
-    const { code } = req.query;
-    if (!code) return res.status(400).json({ error: 'No code provided' });
-
-    // Exchange code for access token
-    const tokenRes = await fetch('https://github.com/login/oauth/access_token', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-      body: JSON.stringify({ client_id: GITHUB_CLIENT_ID, client_secret: GITHUB_CLIENT_SECRET, code }),
-    });
-    const tokenData = await tokenRes.json();
-    if (!tokenData.access_token) return res.status(401).json({ error: 'GitHub auth failed' });
-
-    // Get user info
-    const userRes = await fetch('https://api.github.com/user', {
-      headers: { 'Authorization': `Bearer ${tokenData.access_token}`, 'User-Agent': 'RU-Studio' },
-    });
-    const user = await userRes.json();
-
-    // Check if user is the repo owner or a collaborator
-    const repoOwner = GITHUB_REPO.split('/')[0];
-    const isOwner = user.login === repoOwner;
-
-    if (!isOwner) {
-      const collabRes = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/collaborators/${user.login}`, {
-        headers: { 'Authorization': `Bearer ${tokenData.access_token}`, 'User-Agent': 'RU-Studio' },
-      });
-      if (collabRes.status !== 204) {
-        return res.status(403).json({ error: '你不是该仓库的协作者，无权登录。' });
-      }
-    }
-
-    // Create JWT
-    const db = getDb();
-    // Auto-create admin user if not exists
-    const existing = db.prepare('SELECT * FROM admins WHERE username = ?').get(user.login);
-    if (!existing) {
-      const bcrypt = await import('bcryptjs');
-      db.prepare('INSERT OR REPLACE INTO admins (username, password_hash) VALUES (?, ?)')
-        .run(user.login, bcrypt.default.hashSync(user.login + process.env.JWT_SECRET || 'default', 10));
-    }
-
-    const jwt = generateToken({ username: user.login, githubUser: user.login, avatar: user.avatar_url });
-
-    // Redirect back to admin login page with token
-    const siteUrl = process.env.SITE_URL || `http://localhost:${process.env.PORT || 4000}`;
-    res.redirect(`${siteUrl}/#/admin/login?token=${jwt}&username=${encodeURIComponent(user.login)}`);
-  } catch (err) {
-    console.error('GitHub OAuth error:', err);
-    res.status(500).send('登录失败，请重试');
   }
 });
 
@@ -251,15 +188,21 @@ router.get('/collection', (req, res) => {
 router.post('/collection', (req, res) => {
   try {
     const db = getDb();
-    const { slug, title, subtitle, category, cover_url, cover_alt, year, tags, content, video_url, model_url, sort_order } = req.body;
+    const { slug, title, title_en, subtitle, subtitle_en, category, cover_url, cover_alt, year, tags, content, content_en, gallery, video_url, sort_order } = req.body;
 
     if (!slug || !title || !category || !cover_url) {
       return res.status(400).json({ error: '请填写所有必填字段' });
     }
 
     db.prepare(
-      'INSERT INTO collection_items (slug, title, subtitle, category, cover_url, cover_alt, year, tags, content, video_url, model_url, sort_order) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
-    ).run(slug, title, subtitle || '', category, cover_url, cover_alt || '', year || new Date().getFullYear(), JSON.stringify(tags || []), content || '', video_url || '', model_url || '', sort_order || 0);
+      `INSERT INTO collection_items (slug, title, title_en, subtitle, subtitle_en, category, cover_url, cover_alt, year, tags, content, content_en, gallery, video_url, sort_order)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+    ).run(
+      slug, title, title_en || '', subtitle || '', subtitle_en || '', category,
+      cover_url, cover_alt || '', year || new Date().getFullYear(),
+      JSON.stringify(tags || []), content || '', content_en || '',
+      JSON.stringify(gallery || []), video_url || '', sort_order || 0
+    );
 
     res.json({ success: true, message: '作品已创建' });
   } catch (err) {
@@ -279,21 +222,25 @@ router.put('/collection/:slug', (req, res) => {
       return res.status(404).json({ error: '作品不存在' });
     }
 
+    const pickStr = (v, fallback) => (v !== undefined ? v : fallback ?? '');
     const title = fields.title ?? existing.title;
+    const titleEn = pickStr(fields.title_en, existing.title_en);
     const subtitle = fields.subtitle ?? existing.subtitle;
+    const subtitleEn = pickStr(fields.subtitle_en, existing.subtitle_en);
     const category = fields.category ?? existing.category;
-    const cover_url = fields.cover_url ?? existing.cover_url;
-    const cover_alt = fields.cover_alt ?? existing.cover_alt;
+    const coverUrl = fields.cover_url ?? existing.cover_url;
+    const coverAlt = fields.cover_alt ?? existing.cover_alt;
     const year = fields.year ?? existing.year;
     const tags = fields.tags ? JSON.stringify(fields.tags) : existing.tags;
     const content = fields.content !== undefined ? fields.content : (existing.content || '');
-    const video_url = fields.video_url !== undefined ? fields.video_url : (existing.video_url || '');
-    const model_url = fields.model_url !== undefined ? fields.model_url : (existing.model_url || '');
-    const sort_order = fields.sort_order !== undefined ? fields.sort_order : existing.sort_order;
+    const contentEn = fields.content_en !== undefined ? fields.content_en : (existing.content_en || '');
+    const gallery = fields.gallery !== undefined ? JSON.stringify(fields.gallery) : (existing.gallery || '[]');
+    const videoUrl = fields.video_url !== undefined ? fields.video_url : (existing.video_url || '');
+    const sortOrder = fields.sort_order !== undefined ? fields.sort_order : existing.sort_order;
 
     db.prepare(
-      'UPDATE collection_items SET title=?, subtitle=?, category=?, cover_url=?, cover_alt=?, year=?, tags=?, content=?, video_url=?, model_url=?, sort_order=? WHERE slug=?'
-    ).run(title, subtitle, category, cover_url, cover_alt, year, tags, content, video_url, model_url, sort_order, slug);
+      `UPDATE collection_items SET title=?, title_en=?, subtitle=?, subtitle_en=?, category=?, cover_url=?, cover_alt=?, year=?, tags=?, content=?, content_en=?, gallery=?, video_url=?, sort_order=? WHERE slug=?`
+    ).run(title, titleEn, subtitle, subtitleEn, category, coverUrl, coverAlt, year, tags, content, contentEn, gallery, videoUrl, sortOrder, slug);
 
     res.json({ success: true, message: '作品已更新' });
   } catch (err) {
@@ -384,60 +331,20 @@ router.delete('/journal/:slug', (req, res) => {
 });
 
 // ─── Image Upload ───
-// ─── Image/Video/3D Upload — Cloudinary or local ───
-router.post('/upload', upload.single('file'), async (req, res) => {
+router.post('/upload', upload.single('file'), (req, res) => {
   try {
     if (!req.file) {
       return res.status(400).json({ error: '请选择要上传的文件' });
     }
-
-    // Try Cloudinary first if configured
-    const cloudName = process.env.CLOUDINARY_CLOUD_NAME;
-    const apiKey = process.env.CLOUDINARY_API_KEY;
-    const apiSecret = process.env.CLOUDINARY_API_SECRET;
-
-    if (cloudName && apiKey && apiSecret) {
-      try {
-        // Dynamic import returns { default: cloudinary } or { v2: ... }
-        const cloudinaryModule = await import('cloudinary');
-        const cloudinary = cloudinaryModule.v2 || cloudinaryModule.default?.v2;
-        if (!cloudinary) throw new Error('Cloudinary v2 not found in module');
-
-        cloudinary.config({ cloud_name: cloudName, api_key: apiKey, api_secret: apiSecret });
-
-        const ext = path.extname(req.file.originalname).toLowerCase();
-        const isVideo = /\.(mp4|webm|mov)$/i.test(ext);
-        const isModel = /\.(glb|gltf|bin)$/i.test(ext);
-
-        const result = await cloudinary.uploader.upload(req.file.path, {
-          folder: 'ru-studio',
-          resource_type: isVideo ? 'video' : isModel ? 'raw' : 'image',
-          use_filename: true,
-          unique_filename: true,
-        });
-
-        // Clean up local temp file
-        fs.unlink(req.file.path, () => {});
-        console.log('Cloudinary upload OK:', result.secure_url);
-        return res.json({ success: true, url: result.secure_url, filename: req.file.filename, storage: 'cloudinary' });
-      } catch (cloudErr) {
-        console.error('Cloudinary upload failed:', cloudErr.message);
-        // Clean up temp file even on failure
-        try { fs.unlink(req.file.path, () => {}); } catch {}
-        return res.status(500).json({ error: 'Cloudinary 上传失败: ' + (cloudErr.message || '未知错误') });
-      }
-    }
-
-    // Local fallback (no Cloudinary configured)
     const url = '/uploads/' + req.file.filename;
-    res.json({ success: true, url, filename: req.file.filename, storage: 'local' });
+    res.json({ success: true, url, filename: req.file.filename });
   } catch (err) {
     console.error('Upload error:', err);
     res.status(500).json({ error: '上传失败' });
   }
 }, (err, req, res, next) => {
   if (err instanceof multer.MulterError) {
-    return res.status(400).json({ error: '文件太大，最大支持 50MB' });
+    return res.status(400).json({ error: '文件太大，最大支持 10MB' });
   }
   if (err) {
     return res.status(400).json({ error: err.message });
@@ -500,6 +407,133 @@ router.get('/contacts', (req, res) => {
     const db = getDb();
     const contacts = db.prepare('SELECT * FROM contacts ORDER BY created_at DESC').all();
     res.json(contacts);
+  } catch (err) {
+    res.status(500).json({ error: '服务器错误' });
+  }
+});
+
+// ─── Press / media items CRUD ───
+router.get('/press', (req, res) => {
+  try {
+    const db = getDb();
+    const items = db.prepare('SELECT * FROM press_items ORDER BY sort_order ASC, date DESC').all();
+    res.json(items);
+  } catch (err) {
+    res.status(500).json({ error: '服务器错误' });
+  }
+});
+
+router.post('/press', (req, res) => {
+  try {
+    const db = getDb();
+    const { id, type, title, url, file_url, logo_url, source, date, sort_order } = req.body;
+    if (!id || !title) {
+      return res.status(400).json({ error: '请填写 ID 与标题' });
+    }
+    db.prepare(
+      "INSERT INTO press_items (id, type, title, url, file_url, logo_url, source, date, sort_order) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"
+    ).run(id, type || 'coverage', title, url || '', file_url || '', logo_url || '', source || '', date || '', sort_order || 0);
+    res.json({ success: true, message: '媒体条目已创建' });
+  } catch (err) {
+    console.error('Create press item error:', err);
+    res.status(500).json({ error: '服务器错误，ID可能已存在' });
+  }
+});
+
+router.put('/press/:id', (req, res) => {
+  try {
+    const db = getDb();
+    const existing = db.prepare('SELECT * FROM press_items WHERE id = ?').get(req.params.id);
+    if (!existing) return res.status(404).json({ error: '媒体条目不存在' });
+    const f = req.body;
+    db.prepare(
+      'UPDATE press_items SET type=?, title=?, url=?, file_url=?, logo_url=?, source=?, date=?, sort_order=? WHERE id=?'
+    ).run(
+      f.type ?? existing.type,
+      f.title ?? existing.title,
+      f.url !== undefined ? f.url : existing.url,
+      f.file_url !== undefined ? f.file_url : existing.file_url,
+      f.logo_url !== undefined ? f.logo_url : existing.logo_url,
+      f.source !== undefined ? f.source : existing.source,
+      f.date !== undefined ? f.date : existing.date,
+      f.sort_order !== undefined ? f.sort_order : existing.sort_order,
+      req.params.id
+    );
+    res.json({ success: true, message: '媒体条目已更新' });
+  } catch (err) {
+    console.error('Update press item error:', err);
+    res.status(500).json({ error: '服务器错误' });
+  }
+});
+
+router.delete('/press/:id', (req, res) => {
+  try {
+    const db = getDb();
+    db.prepare('DELETE FROM press_items WHERE id = ?').run(req.params.id);
+    res.json({ success: true, message: '媒体条目已删除' });
+  } catch (err) {
+    res.status(500).json({ error: '服务器错误' });
+  }
+});
+
+// ─── Subscribers ───
+router.get('/subscribers', (req, res) => {
+  try {
+    const db = getDb();
+    const subs = db.prepare('SELECT id, email, confirmed, created_at FROM subscribers ORDER BY created_at DESC').all();
+    res.json(subs);
+  } catch (err) {
+    res.status(500).json({ error: '服务器错误' });
+  }
+});
+
+router.delete('/subscribers/:id', (req, res) => {
+  try {
+    const db = getDb();
+    db.prepare('DELETE FROM subscribers WHERE id = ?').run(req.params.id);
+    res.json({ success: true, message: '订阅者已删除' });
+  } catch (err) {
+    res.status(500).json({ error: '服务器错误' });
+  }
+});
+
+// CSV export of subscribers
+router.get('/subscribers/export.csv', (req, res) => {
+  try {
+    const db = getDb();
+    const subs = db.prepare('SELECT email, confirmed, created_at FROM subscribers ORDER BY created_at ASC').all();
+    const csv = 'email,confirmed,created_at\n' + subs.map((s) => `${s.email},${s.confirmed},"${s.created_at}"`).join('\n');
+    res.setHeader('Content-Type', 'text/csv; charset=utf-8');
+    res.setHeader('Content-Disposition', 'attachment; filename="subscribers.csv"');
+    res.send('\ufeff' + csv); // BOM so Excel opens UTF-8 correctly
+  } catch (err) {
+    res.status(500).json({ error: '服务器错误' });
+  }
+});
+
+// ─── Analytics — aggregated pageviews ───
+router.get('/analytics', (req, res) => {
+  try {
+    const db = getDb();
+    const byDay = db.prepare(
+      "SELECT day, COUNT(*) as count FROM pageviews WHERE day >= date('now', '-30 days') GROUP BY day ORDER BY day ASC"
+    ).all();
+    const topPaths = db.prepare(
+      "SELECT path, COUNT(*) as count FROM pageviews WHERE day >= date('now', '-30 days') GROUP BY path ORDER BY count DESC LIMIT 10"
+    ).all();
+    const topReferrers = db.prepare(
+      "SELECT CASE WHEN referrer = '' THEN '(直接访问)' ELSE referrer END as referrer, COUNT(*) as count FROM pageviews WHERE day >= date('now', '-30 days') GROUP BY referrer ORDER BY count DESC LIMIT 10"
+    ).all();
+    const total = db.prepare('SELECT COUNT(*) as count FROM pageviews').get().count;
+    const today = db.prepare("SELECT COUNT(*) as count FROM pageviews WHERE day = date('now')").get().count;
+    res.json({
+      total,
+      today,
+      byDay,
+      topPaths,
+      topReferrers,
+      subscribers: db.prepare('SELECT COUNT(*) as count FROM subscribers').get().count,
+    });
   } catch (err) {
     res.status(500).json({ error: '服务器错误' });
   }

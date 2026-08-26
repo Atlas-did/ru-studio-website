@@ -1,6 +1,7 @@
 import { useScrollReveal } from '@/hooks/useScrollReveal';
 import { useSiteData } from '@/hooks/useSiteData';
 import { api } from '@/lib/api';
+import SEO from '@/components/SEO';
 
 interface AboutSection {
   id: string;
@@ -31,6 +32,11 @@ export default function AboutPage() {
 
   return (
     <div className="bg-ink min-h-screen pt-20 md:pt-28">
+      <SEO
+        title="关于我们"
+        description="儒意 RU STUDIO——扎根曲阜的儒家文化创意工作室。品牌使命、愿景、核心业务与发展规划。"
+        path="/about"
+      />
       {/* Hero */}
       <div ref={titleRef} className="px-6 md:px-12 py-16 md:py-24">
         <div className="max-w-[1440px] mx-auto">

@@ -22,6 +22,15 @@ export default function ConceptsSection() {
     const header = headerRef.current;
     if (!section || !header) return;
 
+    // Run-once guard: GSAP reveal must not replay when async data replaces initialData
+    const list = concepts || [];
+    if (list.length === 0) return;
+    if (header.dataset.animated === '1') {
+      ScrollTrigger.refresh();
+      return;
+    }
+    header.dataset.animated = '1';
+
     const ctx = gsap.context(() => {
       // Header animation
       gsap.from(header.querySelectorAll('.reveal-item'), {
@@ -182,9 +191,7 @@ export default function ConceptsSection() {
                       {numeral}
                     </div>
                     {/* Border */}
-                    <div className="absolute inset-0 border border-[rgba(245,242,235,0.08)]" />
-                    {/* Noise */}
-                    <div className="noise-overlay absolute inset-0" />
+                    <div className="absolute inset-0 border border-line" />
                   </div>
                 </div>
               </div>

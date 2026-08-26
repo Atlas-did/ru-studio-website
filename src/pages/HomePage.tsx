@@ -5,35 +5,37 @@ import WorksSection from '@/sections/WorksSection';
 import ParallaxStrip from '@/sections/ParallaxStrip';
 import JournalPreview from '@/sections/JournalPreview';
 import CTASection from '@/sections/CTASection';
+import SEO from '@/components/SEO';
 import SectionTransition from '@/components/SectionTransition';
 import TimelineSection from '@/components/interactive/TimelineSection';
-import VideoSection from '@/sections/VideoSection';
-import { useSiteData } from '@/hooks/useSiteData';
-import { api } from '@/lib/api';
 
 export default function HomePage() {
-  const { data: config } = useSiteData(() => api.getSiteConfig(), { initialData: {} as any });
   return (
     <>
-      <HeroSection />
-      <SectionTransition from="#111111" to="#E8E4DC" height={100} />
-      <QuoteSection />
-      <SectionTransition from="#E8E4DC" to="#111111" height={100} />
-      <TimelineSection />
-      <SectionTransition from="#111111" to="#111111" height={60} />
-      <ConceptsSection />
-      <SectionTransition from="#111111" to="#2C2C2C" height={80} />
-      <WorksSection />
-      <SectionTransition from="#2C2C2C" to="#111111" height={60} />
-      <ParallaxStrip />
-      <SectionTransition from="#111111" to="#111111" height={60} />
-      <VideoSection
-        videoUrl={(config as any)?.homepageVideoUrl || '/assets/showreel.mp4'}
-        posterUrl="/assets/hero-still-life.jpg"
-        title={(config as any)?.homepageVideoTitle || '影像作品'}
-        subtitle="以当代视角，捕捉千年文脉的光影流转"
+      <SEO
+        title="儒意 RU STUDIO — 向历史借灵感，为当代造美物"
+        description="儒意 RU STUDIO，儒家文化创意工作室：以孔府档案与孔庙建筑为蓝本，将千年文脉转化为可触可感的当代器物。经典复刻 · 生活美学 · 互动体验 · 定制服务。"
+        path="/"
+        jsonLd={{
+          '@context': 'https://schema.org',
+          '@type': 'Organization',
+          name: '儒意 RU STUDIO',
+          alternateName: '儒意',
+          url: '/',
+          description: '儒家文化创意工作室',
+          foundingLocation: '山东省曲阜市',
+          email: 'wu27@qfnu.edu.cn',
+        }}
       />
-      <SectionTransition from="#111111" to="#F5F2EB" height={80} />
+
+      <HeroSection />
+      <SectionTransition from="#0A0A0A" to="#ECE8E0" height={100} />
+      <QuoteSection />
+      <SectionTransition from="#ECE8E0" to="#0A0A0A" height={100} />
+      <TimelineSection />
+      <ConceptsSection />
+      <WorksSection />
+      <ParallaxStrip />
       <JournalPreview />
       <CTASection />
     </>

@@ -3,6 +3,7 @@ import { useScrollReveal } from '@/hooks/useScrollReveal';
 import { useSiteData } from '@/hooks/useSiteData';
 import { api } from '@/lib/api';
 import { getSiteConfig } from '@/lib/data';
+import SEO from '@/components/SEO';
 
 export default function CooperationPage() {
   const { data: config } = useSiteData(
@@ -37,6 +38,11 @@ export default function CooperationPage() {
 
   return (
     <div className="bg-ink min-h-screen pt-20 md:pt-28">
+      <SEO
+        title="合作洽谈"
+        description="高校文创定制、企业品牌联名、文化空间策划——与儒意 RU STUDIO 开启儒家文化主题合作的多种方式。"
+        path="/cooperation"
+      />
       {/* Hero */}
       <div ref={titleRef} className="px-6 md:px-12 py-16 md:py-24">
         <div className="max-w-[1440px] mx-auto">

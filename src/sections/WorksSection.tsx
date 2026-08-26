@@ -26,6 +26,14 @@ export default function WorksSection() {
     const grid = gridRef.current;
     if (!section || !header || !grid) return;
 
+    // Run-once guard: reveal animations must not replay when async data arrives
+    if (items.length === 0) return;
+    if (header.dataset.animated === '1') {
+      ScrollTrigger.refresh();
+      return;
+    }
+    header.dataset.animated = '1';
+
     const ctx = gsap.context(() => {
       // Header animation
       gsap.from(header.querySelectorAll('.reveal-item'), {
@@ -130,9 +138,7 @@ export default function WorksSection() {
                       loading="lazy"
                     />
                     {/* Hover overlay */}
-                    <div className="absolute inset-0 bg-ink/0 group-hover:bg-ink/40 transition-colors duration-500" />
-                    {/* Noise */}
-                    <div className="noise-overlay absolute inset-0" />
+                    <div className="absolute inset-0 bg-base/0 group-hover:bg-black/40 transition-colors duration-500" />
                   </div>
 
                   {/* Info overlay on hover */}

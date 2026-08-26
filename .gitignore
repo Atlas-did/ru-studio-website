@@ -23,10 +23,15 @@ dist-ssr
 *.sln
 *.sw?
 
-# Reference / design files — exclude all variants
-Kimi_Agent*/
+# Reference / design files
+Kimi_Agent_儒意官网重构/
 
 # Database files (generated at runtime)
 data/rustudio.db
 data/rustudio.db-shm
 data/rustudio.db-wal
+
+# Environment secrets
+.env
+.env.*
+!.env.example

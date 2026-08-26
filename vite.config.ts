@@ -9,10 +9,25 @@ export default defineConfig({
   plugins: [inspectAttr(), react()],
   server: {
     port: 3000,
+    proxy: {
+      '/api': 'http://localhost:4000',
+      '/uploads': 'http://localhost:4000',
+    },
   },
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
+    },
+  },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'vendor-react': ['react', 'react-dom', 'react-router', 'react-router-dom'],
+          'vendor-motion': ['gsap', 'lenis'],
+          'vendor-charts': ['recharts'],
+        },
+      },
     },
   },
 });

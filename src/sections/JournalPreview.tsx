@@ -25,6 +25,14 @@ export default function JournalPreview() {
     const list = listRef.current;
     if (!section || !header || !list) return;
 
+    // Run-once guard
+    if (posts.length === 0) return;
+    if (header.dataset.animated === '1') {
+      ScrollTrigger.refresh();
+      return;
+    }
+    header.dataset.animated = '1';
+
     const ctx = gsap.context(() => {
       gsap.from(header.querySelectorAll('.reveal-item'), {
         opacity: 0,
@@ -60,24 +68,24 @@ export default function JournalPreview() {
   }, [posts]);
 
   return (
-    <section ref={sectionRef} className="relative bg-ink py-24 md:py-32 lg:py-40">
+    <section ref={sectionRef} data-theme="paper" className="relative bg-base py-24 md:py-32 lg:py-40">
       <div className="max-w-[1440px] mx-auto px-6 md:px-12 lg:px-16">
         {/* Header */}
         <div ref={headerRef} className="flex items-end justify-between mb-16">
           <div>
-            <span className="reveal-item block text-overline text-stone mb-4">
-              JOURNAL
+            <span className="reveal-item block text-overline text-fg-muted mb-4">
+              JOURNAL · 动态
             </span>
-            <h2 className="reveal-item font-serif text-display-l text-mist">
-              日志
+            <h2 className="reveal-item font-serif text-display-l text-fg">
+              品牌日志
             </h2>
           </div>
           <Link
             to="/journal"
-            className="reveal-item hidden md:flex items-center gap-2 text-overline text-stone hover:text-mist transition-colors duration-300 group"
+            className="reveal-item hidden md:flex items-center gap-2 text-overline text-fg-muted hover:text-fg transition-colors duration-300 group"
           >
             <span>ALL ENTRIES</span>
-            <svg className="w-4 h-4 transform group-hover:translate-x-1 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg className="w-4 h-4 transform group-hover:translate-x-1 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M17 8l4 4m0 0l-4 4m4-4H3" />
             </svg>
           </Link>
@@ -89,24 +97,24 @@ export default function JournalPreview() {
             <Link
               key={post.slug}
               to={`/journal/${post.slug}`}
-              className="journal-item group block py-8 md:py-10 border-t border-[rgba(245,242,235,0.08)] hover:bg-ink-light/30 transition-colors duration-300"
+              className="journal-item group block py-8 md:py-10 border-t border-line hover:bg-raised/60 transition-colors duration-300"
             >
               <div className="grid grid-cols-1 md:grid-cols-12 gap-4 md:gap-8 items-start">
                 <div className="md:col-span-2 flex md:flex-col gap-3 md:gap-1">
-                  <span className="text-caption text-stone">{post.date}</span>
+                  <span className="text-caption text-fg-muted">{post.date}</span>
                   <span className="text-caption-s text-cinnabar tracking-overline">{post.category}</span>
                 </div>
                 <div className="md:col-span-8">
-                  <h3 className="font-serif text-h2 text-mist group-hover:text-mist/80 transition-colors duration-300 mb-2">
+                  <h3 className="font-serif text-h2 text-fg group-hover:text-accent transition-colors duration-300 mb-2">
                     {post.title}
                   </h3>
-                  <p className="text-body text-stone line-clamp-2 leading-relaxed">
+                  <p className="text-body text-fg-secondary line-clamp-2 leading-relaxed">
                     {post.excerpt}
                   </p>
                 </div>
                 <div className="md:col-span-2 flex items-center justify-end">
-                  <div className="w-10 h-10 rounded-full border border-[rgba(245,242,235,0.08)] flex items-center justify-center group-hover:border-mist/30 group-hover:bg-mist/5 transition-all duration-300">
-                    <svg className="w-4 h-4 text-stone group-hover:text-mist transform group-hover:translate-x-0.5 transition-all duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <div className="w-10 h-10 rounded-full border border-line-strong flex items-center justify-center group-hover:border-accent group-hover:bg-accent-soft transition-all duration-300">
+                    <svg className="w-4 h-4 text-fg-muted group-hover:text-accent transform group-hover:translate-x-0.5 transition-all duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M17 8l4 4m0 0l-4 4m4-4H3" />
                     </svg>
                   </div>
@@ -114,14 +122,14 @@ export default function JournalPreview() {
               </div>
             </Link>
           ))}
-          <div className="border-t border-[rgba(245,242,235,0.08)]" />
+          <div className="border-t border-line" />
         </div>
 
         {/* Mobile View All */}
         <div className="mt-12 text-center md:hidden">
-          <Link to="/journal" className="inline-flex items-center gap-2 text-overline text-stone hover:text-mist transition-colors duration-300">
+          <Link to="/journal" className="inline-flex items-center gap-2 text-overline text-fg-muted hover:text-fg transition-colors duration-300">
             <span>ALL ENTRIES</span>
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M17 8l4 4m0 0l-4 4m4-4H3" />
             </svg>
           </Link>

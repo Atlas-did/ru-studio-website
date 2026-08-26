@@ -28,7 +28,7 @@ export function isAuthenticated(): boolean {
   return !!getToken();
 }
 
-async function authFetch(path: string, options: RequestInit = {}): Promise<Response> {
+export async function authFetch(path: string, options: RequestInit = {}): Promise<Response> {
   const token = getToken();
   const headers: Record<string, string> = {
     ...(options.headers as Record<string, string> || {}),
@@ -47,7 +47,7 @@ async function authFetch(path: string, options: RequestInit = {}): Promise<Respo
 
   if (res.status === 401) {
     clearAuth();
-    window.location.href = '/#/admin/login';
+    window.location.href = '/admin/login';
     throw new Error('Unauthorized');
   }
 
@@ -179,6 +179,47 @@ export const adminApi = {
   // Contacts
   async getContacts(): Promise<any[]> {
     const res = await authFetch('/api/admin/contacts');
+    return res.json();
+  },
+
+  // Press / media
+  async getPress(): Promise<any[]> {
+    const res = await authFetch('/api/admin/press');
+    return res.json();
+  },
+  async createPressItem(data: any): Promise<{ success: boolean }> {
+    const res = await authFetch('/api/admin/press', { method: 'POST', body: JSON.stringify(data) });
+    return res.json();
+  },
+  async updatePressItem(id: string, data: any): Promise<{ success: boolean }> {
+    const res = await authFetch(`/api/admin/press/${id}`, { method: 'PUT', body: JSON.stringify(data) });
+    return res.json();
+  },
+  async deletePressItem(id: string): Promise<{ success: boolean }> {
+    const res = await authFetch(`/api/admin/press/${id}`, { method: 'DELETE' });
+    return res.json();
+  },
+
+  // Subscribers
+  async getSubscribers(): Promise<any[]> {
+    const res = await authFetch('/api/admin/subscribers');
+    return res.json();
+  },
+  async deleteSubscriber(id: number): Promise<{ success: boolean }> {
+    const res = await authFetch(`/api/admin/subscribers/${id}`, { method: 'DELETE' });
+    return res.json();
+  },
+
+  // Analytics
+  async getAnalytics(): Promise<{
+    total: number;
+    today: number;
+    subscribers: number;
+    byDay: Array<{ day: string; count: number }>;
+    topPaths: Array<{ path: string; count: number }>;
+    topReferrers: Array<{ referrer: string; count: number }>;
+  }> {
+    const res = await authFetch('/api/admin/analytics');
     return res.json();
   },
 };

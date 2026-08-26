@@ -9,7 +9,9 @@ const navItems = [
   { label: 'Concepts', path: '/admin/concepts', icon: '◈' },
   { label: 'Collection', path: '/admin/collection', icon: '◆' },
   { label: 'Journal', path: '/admin/journal', icon: '◇' },
-  { label: 'Media', path: '/admin/media', icon: '📁' },
+  { label: 'Press 媒体', path: '/admin/press', icon: '▣' },
+  { label: 'Subscribers 订阅', path: '/admin/subscribers', icon: '@' },
+  { label: 'Analytics 统计', path: '/admin/analytics', icon: '⌗' },
 ];
 
 export default function AdminLayout() {

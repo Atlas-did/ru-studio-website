@@ -72,10 +72,10 @@
 ## 三、重要注意事项
 
 ### 1. 管理员密码
-- **默认密码**：`admin123`
-- **登录地址**：`/#/admin`
-- ⚠️ 密码存储在数据库中，修改密码需要直接改数据库或通过 API
-- ⚠️ 建议在 Railway 环境变量中设置 `JWT_SECRET` 增强安全性
+- **无默认密码**：出于安全考虑，管理员账号仅在同时设置 `CREATE_DEFAULT_ADMIN=true` 和 `DEFAULT_ADMIN_PASSWORD` 环境变量时才会创建（用户名固定为 `admin`）
+- **登录地址**：`/admin`（BrowserRouter 模式）
+- ⚠️ 密码以 bcrypt 哈希存储，修改密码需要直接改数据库或通过 API
+- ⚠️ 生产环境必须设置 `JWT_SECRET`，否则服务启动即退出
 
 ### 2. 邮箱配置
 联系表单的数据**始终会存入数据库**（可在管理后台查看）。
@@ -91,12 +91,12 @@
 | `NOTIFY_EMAIL` | 收通知的邮箱 |
 
 ### 3. 字体
-当前使用 Google Fonts CDN（Playfair Display、Inter、Noto Serif SC）。
-⚠️ **Google Fonts 在中国大陆可能被屏蔽**，建议下载 .woff2 字体文件放入 `public/fonts/` 并修改 `src/index.css` 添加 `@font-face` 声明。
+✅ 已解决：字体通过 @fontsource npm 包自托管（Noto Serif SC / Playfair Display / Inter），
+构建时打包进 dist/assets，不再依赖 Google Fonts CDN，中国大陆可正常访问。
 
 ### 4. 数据库持久化
 - Railway 免费套餐下，每次重新部署**数据库会重置**（SQLite 文件不持久化）
-- 升级 Railway 套餐或使用 Volume 挂载可以解决
+- 已预留 `DATA_DIR` 环境变量：挂载 Volume 后设为卷路径（如 `/data`）即可持久化，零代码改动
 - 当前种子数据会在首次启动时自动填充
 
 ### 5. 关于 Gitee

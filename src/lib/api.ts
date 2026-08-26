@@ -8,12 +8,28 @@ import { getSiteConfig, getConcepts, getCollectionItems, getJournalPosts } from 
 
 const API_BASE = '';
 
-// Track whether we successfully connected to the API
+export interface PressItem {
+  id: string;
+  type: string;
+  title: string;
+  url?: string;
+  file_url?: string;
+  logo_url?: string;
+  source?: string;
+  date?: string;
+}
+
+// Track whether we successfully connected to the API.
+// `false` is time-boxed: after API_DOWN_TTL_MS we retry instead of giving up forever.
 let apiAvailable: boolean | null = null;
+let apiDownSince = 0;
+const API_DOWN_TTL_MS = 30_000;
 
 async function tryApi<T>(path: string, fallback: () => T): Promise<T> {
-  // If we already know API is down, use fallback immediately
-  if (apiAvailable === false) {
+  if (
+    apiAvailable === false &&
+    Date.now() - apiDownSince < API_DOWN_TTL_MS
+  ) {
     return fallback();
   }
 
@@ -25,16 +41,15 @@ async function tryApi<T>(path: string, fallback: () => T): Promise<T> {
 
     if (res.ok) {
       apiAvailable = true;
+      apiDownSince = 0;
       return res.json();
     }
     throw new Error(`API error: ${res.status}`);
   } catch {
-    // First failure — mark API as unavailable
-    if (apiAvailable === true) {
-      // Was available, now it's down — try once more
-      apiAvailable = null;
-    } else {
+    // Mark API down with a timestamp so we retry after TTL
+    if (apiAvailable !== false) {
       apiAvailable = false;
+      apiDownSince = Date.now();
     }
     return fallback();
   }
@@ -105,4 +120,34 @@ export const api = {
       return { success: false, message: '提交失败，请稍后重试' };
     }
   },
+
+  /** Newsletter subscription */
+  async subscribe(email: string): Promise<{ success: boolean }> {
+    const res = await fetch(`${API_BASE}/api/subscribe`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email }),
+    });
+    if (!res.ok) throw new Error('subscribe failed');
+    return res.json();
+  },
+
+  /** Press / media items */
+  async getPress(): Promise<PressItem[]> {
+    return tryApi<PressItem[]>('/api/press', () => []);
+  },
 };
+
+/** Fire-and-forget pageview beacon (privacy friendly, no cookies) */
+export function trackPageview(path: string) {
+  try {
+    const payload = JSON.stringify({ path, referrer: document.referrer || '' });
+    if (navigator.sendBeacon) {
+      navigator.sendBeacon(`${API_BASE}/api/track`, new Blob([payload], { type: 'application/json' }));
+    } else {
+      fetch(`${API_BASE}/api/track`, { method: 'POST', body: payload, keepalive: true }).catch(() => {});
+    }
+  } catch {
+    /* never block navigation on analytics */
+  }
+}

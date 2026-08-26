@@ -3,6 +3,7 @@ import { useScrollReveal } from '@/hooks/useScrollReveal';
 import { useSiteData } from '@/hooks/useSiteData';
 import { api } from '@/lib/api';
 import { getJournalPosts } from '@/lib/data';
+import SEO from '@/components/SEO';
 
 export default function JournalPage() {
   const { data: posts } = useSiteData(
@@ -14,6 +15,11 @@ export default function JournalPage() {
 
   return (
     <div className="bg-mist min-h-screen pt-20 md:pt-28">
+      <SEO
+        title="品牌日志"
+        description="儒意动态：展览回顾、新品发布、学术合作与品牌荣誉——记录儒家文化当代化表达的每一步。"
+        path="/journal"
+      />
       {/* Hero */}
       <div ref={titleRef} className="px-6 md:px-12 py-16 md:py-24">
         <div className="max-w-[1440px] mx-auto">

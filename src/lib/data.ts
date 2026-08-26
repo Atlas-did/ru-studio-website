@@ -1,4 +1,4 @@
-export interface MediaAsset {
+﻿export interface MediaAsset {
   id: string;
   url: string;
   alt: string;
@@ -15,6 +15,8 @@ export interface CollectionItem {
   year: number;
   tags: string[];
   content?: string;
+  gallery?: string[];
+  video_url?: string;
 }
 
 export interface JournalPost {
@@ -99,6 +101,7 @@ export function getCollectionItems(): CollectionItem[] {
         width: 800,
         height: 1067,
       },
+      gallery: ['/assets/work-bookmark-detail.jpg'],
       tags: ['金属工艺', '文字雕刻', '文具'],
     },
     {
@@ -109,12 +112,13 @@ export function getCollectionItems(): CollectionItem[] {
       year: 2024,
       cover: {
         id: 'ti-1',
-        url: '/assets/crt-temple-texture.jpg',
-        alt: '黑白水墨风格孔庙建筑摄影',
+        url: '/assets/work-temple-ink.jpg',
+        alt: '水墨风格孔庙飞檐斗拱',
         width: 1200,
         height: 675,
       },
-      tags: ['建筑摄影', '黑白', '孔庙'],
+      gallery: ['/assets/crt-temple-texture.jpg'],
+      tags: ['建筑摄影', '水墨', '孔庙'],
     },
     {
       slug: 'scholar-still',
@@ -124,11 +128,12 @@ export function getCollectionItems(): CollectionItem[] {
       year: 2024,
       cover: {
         id: 'ss-1',
-        url: '/assets/hero-still-life.jpg',
-        alt: '毛笔、砚台、宣纸与几何直尺的静物摄影',
+        url: '/assets/work-still-life.jpg',
+        alt: '文房四宝静物摄影，柔和窗光',
         width: 800,
         height: 1067,
       },
+      gallery: ['/assets/hero-ink-still.jpg', '/assets/hero-still-life.jpg'],
       tags: ['静物', '文房', '新中式'],
     },
     {
@@ -139,11 +144,12 @@ export function getCollectionItems(): CollectionItem[] {
       year: 2024,
       cover: {
         id: 'ti-2',
-        url: '/assets/crt-temple-texture.jpg',
-        alt: '孔庙大成殿建筑摄影',
+        url: '/assets/work-dacheng.jpg',
+        alt: '孔庙大成殿暮色建筑摄影',
         width: 1200,
         height: 675,
       },
+      gallery: ['/assets/work-temple-ink.jpg'],
       tags: ['建筑', '孔庙', '纪录片'],
     },
     {
@@ -154,11 +160,12 @@ export function getCollectionItems(): CollectionItem[] {
       year: 2024,
       cover: {
         id: 'bm-2',
-        url: '/assets/work-bookmark.jpg',
-        alt: '青铜书签系列',
+        url: '/assets/work-bookmark-series.jpg',
+        alt: '黄铜书签系列平铺摄影',
         width: 800,
         height: 1067,
       },
+      gallery: ['/assets/work-bookmark.jpg', '/assets/work-bookmark-detail.jpg'],
       tags: ['金属工艺', '系列', '文具'],
     },
     {
@@ -169,11 +176,12 @@ export function getCollectionItems(): CollectionItem[] {
       year: 2024,
       cover: {
         id: 'so-1',
-        url: '/assets/hero-still-life.jpg',
-        alt: '工作室静物',
-        width: 800,
-        height: 1067,
+        url: '/assets/work-studio-objects.jpg',
+        alt: '工作室案头物件与图纸',
+        width: 1200,
+        height: 675,
       },
+      gallery: ['/assets/about-atelier.jpg'],
       tags: ['静物', '工作室', '日常'],
     },
   ];
@@ -187,8 +195,8 @@ export function getJournalPosts(): JournalPost[] {
       excerpt: '为期七天的文化节中，我们的「文房静物」系列受到了来自全国各地文化爱好者的广泛关注。',
       date: '2024-09-28',
       category: '展览',
+      image_url: '/assets/journal-festival.jpg',
       content: '2024年9月，第三十九届中国国际孔子文化节在山东曲阜盛大开幕。\n\n作为扎根曲阜的本土文创品牌，"儒意"受邀在文化创意展区设立了独立展位。\n\n展出的核心作品包括"论语书签"系列、"孔庙墨影"摄影长卷，以及首次公开亮相的"大成殿"建筑微雕模型。\n\n七天展期内，我们的展位累计接待访客超过5000人次，收到合作意向近百份。',
-      image_url: '',
     },
     {
       slug: 'new-product-launch',
@@ -196,8 +204,8 @@ export function getJournalPosts(): JournalPost[] {
       excerpt: '以孔庙建筑光影为灵感，将飞檐斗拱的线条抽象为现代设计语言，打造兼具文化厚度与实用美学的日常器物。',
       date: '2024-10-15',
       category: '新品',
+      image_url: '/assets/work-bookmark-series.jpg',
       content: '经过近半年的设计与打样，我们正式推出2024秋冬新品——「墨影」系列。\n\n这个系列的灵感来源于孔庙建筑的独特光影关系。\n\n「墨影」系列包含三款核心产品：墨影书签套装、光影笔记本、檐角尺。\n\n整个系列采用黑、白、金三色为主调，延续了"儒意"一贯的东方美学风格。',
-      image_url: '',
     },
     {
       slug: 'university-cooperation',
@@ -205,8 +213,8 @@ export function getJournalPosts(): JournalPost[] {
       excerpt: '双方将共同建立「儒家美学实验室」，推动学术研究成果向文创产品的系统性转化。',
       date: '2024-11-03',
       category: '合作',
+      image_url: '/assets/about-atelier.jpg',
       content: '11月3日，"儒意"与曲阜师范大学正式签署战略合作协议，双方将共建「儒家美学实验室」。\n\n「儒家美学实验室」将聚焦三个方向：文献解码、设计转译、市场验证。\n\n实验室首批项目将于2025年春季启动。',
-      image_url: '',
     },
     {
       slug: 'design-awards',
@@ -214,8 +222,8 @@ export function getJournalPosts(): JournalPost[] {
       excerpt: '「论语书签」在第十二届中国文创设计大赛中脱颖而出，获得评委一致好评。',
       date: '2024-12-01',
       category: '荣誉',
+      image_url: '/assets/work-bookmark-detail.jpg',
       content: '喜讯！「论语书签」在第十二届中国文创设计大赛中荣获金奖！\n\n评审意见写道："作品以青铜材质复刻竹简形制，将《论语》文本微缩镌刻于方寸之间，是一件兼具文化厚度与市场潜力的优秀作品。"\n\n这份荣誉属于整个团队。',
-      image_url: '',
     },
   ];
 }

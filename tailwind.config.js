@@ -5,6 +5,18 @@ module.exports = {
   theme: {
     extend: {
       colors: {
+        // Semantic theme-aware tokens — flip with [data-theme="ink"|"paper"]
+        base: 'var(--bg)',
+        raised: 'var(--bg-raised)',
+        deep: 'var(--bg-deep)',
+        fg: 'var(--fg)',
+        'fg-secondary': 'var(--fg-secondary)',
+        'fg-muted': 'var(--fg-muted)',
+        'fg-ghost': 'var(--fg-ghost)',
+        line: 'var(--line-subtle)',
+        'line-strong': 'var(--line-medium)',
+        accent: 'var(--accent)',
+        'accent-soft': 'var(--accent-soft)',
         // Confucian palette — migrated from design system v2.0
         ink: {
           DEFAULT: '#0A0A0A',
@@ -123,6 +135,15 @@ module.exports = {
           from: { opacity: "0", transform: "translateY(20px) rotateX(-40deg)" },
           to: { opacity: "1", transform: "translateY(0) rotateX(0)" },
         },
+        "seal-stamp": {
+          "0%": { opacity: "0", transform: "scale(1.6) rotate(-8deg)" },
+          "60%": { opacity: "1", transform: "scale(0.94) rotate(-2deg)" },
+          "100%": { opacity: "1", transform: "scale(1) rotate(-3deg)" },
+        },
+        "ink-fade-in": {
+          from: { opacity: "0", filter: "blur(8px)" },
+          to: { opacity: "1", filter: "blur(0px)" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -133,6 +154,8 @@ module.exports = {
         "fade-rise": "fade-rise 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards",
         "ink-wipe": "ink-wipe 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards",
         "char-reveal": "char-reveal 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards",
+        "seal-stamp": "seal-stamp 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards",
+        "ink-fade-in": "ink-fade-in 1.2s ease forwards",
       },
     },
   },

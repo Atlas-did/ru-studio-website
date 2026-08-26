@@ -3,6 +3,7 @@ import { useScrollReveal } from '@/hooks/useScrollReveal';
 import { useSiteData } from '@/hooks/useSiteData';
 import { api } from '@/lib/api';
 import { getJournalPosts } from '@/lib/data';
+import SEO from '@/components/SEO';
 
 export default function JournalDetailPage() {
   const { slug } = useParams<{ slug: string }>();
@@ -35,6 +36,22 @@ export default function JournalDetailPage() {
 
   return (
     <div className="min-h-screen bg-mist pt-20 md:pt-28">
+      <SEO
+        title={post.title}
+        description={(post as any).excerpt || post.title}
+        path={`/journal/${post.slug}`}
+        type="article"
+        image={(post as any).image_url || undefined}
+        jsonLd={{
+          '@context': 'https://schema.org',
+          '@type': 'Article',
+          headline: post.title,
+          description: (post as any).excerpt,
+          datePublished: post.date,
+          articleSection: post.category,
+          author: { '@type': 'Organization', name: '儒意 RU STUDIO' },
+        }}
+      />
       {/* Header */}
       <div ref={headerRef} className="px-6 md:px-12 py-12 md:py-20">
         <div className="max-w-3xl mx-auto">

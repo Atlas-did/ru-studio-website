@@ -46,10 +46,11 @@ router.get('/collection', (req, res) => {
       items = db.prepare('SELECT * FROM collection_items ORDER BY sort_order ASC').all();
     }
 
-    // Parse tags from JSON string to array
+    // Parse tags / gallery from JSON strings to arrays
     const parsed = items.map((item) => ({
       ...item,
       tags: JSON.parse(item.tags || '[]'),
+      gallery: (() => { try { return JSON.parse(item.gallery || '[]'); } catch { return []; } })(),
       cover: {
         id: item.slug,
         url: item.cover_url,
@@ -132,7 +133,7 @@ router.post('/contact', async (req, res) => {
             <p><strong>邮箱：</strong>${email}</p>
             <p><strong>备注：</strong>${message || '无'}</p>
             <hr/>
-            <p style="color:#888;font-size:12px;">此邮件由 RU STUDIO 官网自动发送。登录 <a href="${process.env.SITE_URL || ''}/#/admin">管理后台</a> 查看所有留言。</p>
+            <p style="color:#888;font-size:12px;">此邮件由 RU STUDIO 官网自动发送。登录 <a href="${process.env.SITE_URL || ''}/admin">管理后台</a> 查看所有留言。</p>
           `,
         });
         console.log('Email notification sent to', notifyEmail);
@@ -145,6 +146,51 @@ router.post('/contact', async (req, res) => {
   } catch (err) {
     console.error('Error submitting contact:', err);
     res.status(500).json({ error: '服务器错误' });
+  }
+});
+
+// GET /api/press — media coverage + press releases
+router.get('/press', (req, res) => {
+  try {
+    const db = getDb();
+    const { type } = req.query;
+    const items = type
+      ? db.prepare('SELECT * FROM press_items WHERE type = ? ORDER BY sort_order ASC, date DESC').all(type)
+      : db.prepare('SELECT * FROM press_items ORDER BY sort_order ASC, date DESC').all();
+    res.json(items);
+  } catch (err) {
+    console.error('Error fetching press items:', err);
+    res.status(500).json({ error: '服务器错误' });
+  }
+});
+
+// POST /api/subscribe — newsletter signup (rate limited via global API limiter)
+router.post('/subscribe', (req, res) => {
+  try {
+    const email = String(req.body.email || '').trim().toLowerCase();
+    // Pragmatic email validation
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      return res.status(400).json({ success: false, error: '请输入有效的邮箱地址' });
+    }
+    const db = getDb();
+    db.prepare('INSERT OR IGNORE INTO subscribers (email) VALUES (?)').run(email);
+    res.json({ success: true, message: '订阅成功' });
+  } catch (err) {
+    console.error('Error subscribing:', err);
+    res.status(500).json({ error: '服务器错误' });
+  }
+});
+
+// POST /api/track — privacy-friendly pageview beacon
+router.post('/track', (req, res) => {
+  try {
+    const path = String(req.body.path || '/').slice(0, 300);
+    const referrer = String(req.body.referrer || '').slice(0, 300);
+    const db = getDb();
+    db.prepare('INSERT INTO pageviews (path, referrer) VALUES (?, ?)').run(path, referrer);
+    res.status(204).end();
+  } catch {
+    res.status(204).end(); // never fail on analytics
   }
 });
 

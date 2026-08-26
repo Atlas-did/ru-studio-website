@@ -2,9 +2,16 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ═══════════════════════════════════════════════════════
+   RU STUDIO Design System v3.0 — 「墨 / 宣」明暗双叙事
+   Dark chapter (墨 ink)  : immersive, cinematic
+   Light chapter (宣 paper): reading, breathing, museum calm
+   Switch by setting data-theme="ink" | "paper" on any wrapper.
+   ═══════════════════════════════════════════════════════ */
+
 @layer base {
   :root {
-    /* Confucian Color System v2.0 */
+    /* ─── Raw Confucian palette (theme-independent) ─── */
     --color-ink: #0A0A0A;
     --color-ink-light: #1A1A1A;
     --color-ink-lighter: #2C2C2C;
@@ -17,22 +24,13 @@
     --color-gold: #9C8458;
     --color-indigo: #3B4D63;
 
-    /* Text colors */
-    --color-text-primary: #F5F2EB;
-    --color-text-secondary: #8A8580;
-    --color-text-muted: rgba(245, 242, 235, 0.45);
-
-    /* Borders */
-    --color-border-subtle: rgba(245, 242, 235, 0.08);
-    --color-border-medium: rgba(245, 242, 235, 0.15);
-
-    /* Easing curves */
+    /* ─── Easing curves ─── */
     --ease-expo-out: cubic-bezier(0.16, 1, 0.3, 1);
     --ease-expo-in: cubic-bezier(0.7, 0, 0.84, 0);
     --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
     --ease-dramatic: cubic-bezier(0.87, 0, 0.13, 1);
 
-    /* shadcn overrides */
+    /* shadcn overrides (admin panel keeps dark look) */
     --background: 0 0% 4%;
     --foreground: 40 18% 93%;
     --card: 0 0% 4%;
@@ -55,6 +53,47 @@
     --radius: 0px;
   }
 
+  /* ─────────────────────────────────────────────
+     Chapter themes — semantic tokens
+     ───────────────────────────────────────────── */
+  [data-theme='ink'] {
+    --bg: #0a0a0a;
+    --bg-raised: #141414;
+    --bg-deep: #060606;
+    --fg: #f5f2eb;
+    --fg-secondary: rgba(245, 242, 235, 0.68);
+    --fg-muted: rgba(245, 242, 235, 0.42);
+    --fg-ghost: rgba(245, 242, 235, 0.16);
+    --line-subtle: rgba(245, 242, 235, 0.08);
+    --line-medium: rgba(245, 242, 235, 0.16);
+    --accent: #a62d2d;
+    --accent-soft: rgba(166, 45, 45, 0.14);
+    --gold: #9c8458;
+    --glass-bg: rgba(10, 10, 10, 0.72);
+    --grain-opacity: 0.05;
+    --shadow-card: 0 12px 40px rgba(0, 0, 0, 0.55);
+    color-scheme: dark;
+  }
+
+  [data-theme='paper'] {
+    --bg: #ece8e0;
+    --bg-raised: #f5f2eb;
+    --bg-deep: #ddd7cb;
+    --fg: #191713;
+    --fg-secondary: rgba(25, 23, 19, 0.72);
+    --fg-muted: rgba(25, 23, 19, 0.46);
+    --fg-ghost: rgba(25, 23, 19, 0.14);
+    --line-subtle: rgba(25, 23, 19, 0.1);
+    --line-medium: rgba(25, 23, 19, 0.22);
+    --accent: #8b1a1a;
+    --accent-soft: rgba(139, 26, 26, 0.09);
+    --gold: #8a744a;
+    --glass-bg: rgba(236, 232, 224, 0.78);
+    --grain-opacity: 0.06;
+    --shadow-card: 0 10px 32px rgba(60, 50, 35, 0.16);
+    color-scheme: light;
+  }
+
   html {
     scroll-behavior: auto;
     background-color: var(--color-ink);
@@ -63,17 +102,21 @@
   body {
     font-family: 'Noto Serif SC', 'Songti SC', 'SimSun', serif;
     background-color: var(--color-ink);
-    color: var(--color-text-primary);
+    color: var(--fg);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     overflow-x: hidden;
-    font-feature-settings: "liga" 1, "kern" 1;
+    font-feature-settings: 'liga' 1, 'kern' 1;
     text-rendering: optimizeLegibility;
   }
 
   ::selection {
     background-color: var(--color-cinnabar);
     color: var(--color-mist);
+  }
+  [data-theme='paper'] ::selection {
+    background-color: var(--color-cinnabar);
+    color: var(--color-paper);
   }
 
   /* ─── Scrollbar ─── */
@@ -84,34 +127,40 @@
 
   /* ─── Focus states ─── */
   *:focus-visible {
-    outline: 1px solid var(--color-cinnabar);
+    outline: 1px solid var(--accent);
     outline-offset: 2px;
   }
 
+  /* Hide default cursor on desktop when custom cursor enabled */
+  @media (hover: hover) and (pointer: fine) {
+    body.custom-cursor-enabled,
+    body.custom-cursor-enabled * {
+      cursor: none !important;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
 }
 
 @layer components {
-  /* ─── Paper grain overlay ─── */
-  .paper-grain::before {
+  /* ═══ UNIFIED GRAIN — single fixed layer site-wide ═══ */
+  body::after {
     content: '';
     position: fixed;
     inset: 0;
     pointer-events: none;
-    z-index: 9998;
-    opacity: 0.025;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+    z-index: 9990;
+    opacity: var(--grain-opacity, 0.05);
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='gn'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23gn)'/%3E%3C/svg%3E");
     background-repeat: repeat;
     background-size: 256px 256px;
-  }
-
-  /* ─── Noise overlay for images ─── */
-  .noise-overlay::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    opacity: 0.03;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+    transform: translateZ(0);
   }
 
   /* ─── Section label (overline style) ─── */
@@ -121,7 +170,37 @@
     font-weight: 500;
     letter-spacing: 0.2em;
     text-transform: uppercase;
-    color: var(--color-stone);
+    color: var(--fg-muted);
+  }
+
+  /* ─── Vertical CJK typography ─── */
+  .vertical-text {
+    writing-mode: vertical-rl;
+    text-orientation: upright;
+    letter-spacing: 0.35em;
+  }
+
+  /* ─── Giant watermark character ─── */
+  .giant-char {
+    position: absolute;
+    pointer-events: none;
+    user-select: none;
+    font-family: 'Noto Serif SC', serif;
+    font-weight: 600;
+    line-height: 1;
+    color: transparent;
+    -webkit-text-stroke: 1px var(--fg-ghost);
+    z-index: 0;
+  }
+
+  /* ─── Seal stamp block (SVG version preferred; CSS fallback) ─── */
+  .seal-box {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--color-cinnabar);
+    color: var(--color-paper);
+    box-shadow: inset 0 0 0 2px rgba(232, 228, 220, 0.28), inset 0 0 0 5px var(--color-cinnabar);
   }
 
   /* ─── Brush underline effect ─── */
@@ -145,19 +224,21 @@
     transform: scaleX(1);
   }
 
-  /* ─── Glass header — reduced GPU cost ─── */
+  /* ─── Glass header (theme aware) ─── */
   .glass-header {
-    background: rgba(10, 10, 10, 0.9);
-    border-bottom: 1px solid var(--color-border-subtle);
+    background: var(--glass-bg);
+    backdrop-filter: blur(14px) saturate(160%);
+    -webkit-backdrop-filter: blur(14px) saturate(160%);
+    border-bottom: 1px solid var(--line-subtle);
   }
 
-  /* ─── Card hover lift effect ─── */
+  /* ─── Card hover lift ─── */
   .card-lift {
     transition: transform 0.5s var(--ease-expo-out), box-shadow 0.5s var(--ease-expo-out);
   }
   .card-lift:hover {
     transform: translateY(-4px);
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+    box-shadow: var(--shadow-card);
   }
 
   /* ─── Horizontal rule — ink style ─── */
@@ -167,17 +248,44 @@
     background: linear-gradient(
       to right,
       transparent 0%,
-      var(--color-border-medium) 20%,
-      var(--color-border-medium) 80%,
+      var(--line-medium) 20%,
+      var(--line-medium) 80%,
       transparent 100%
     );
+  }
+
+  /* ─── Ink drop divider (decorative) ─── */
+  .ink-divider {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  .ink-divider::before,
+  .ink-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(to right, transparent, var(--line-medium));
+  }
+  .ink-divider::after {
+    background: linear-gradient(to left, transparent, var(--line-medium));
+  }
+
+  /* ─── Rubbing /拓片 duotone image treatment ─── */
+  .img-rubbing {
+    filter: grayscale(1) contrast(1.15) brightness(0.92) sepia(0.18);
+    transition: filter 0.6s var(--ease-smooth);
+  }
+  .img-rubbing-hover:hover .img-rubbing,
+  .group:hover .img-rubbing {
+    filter: grayscale(0) contrast(1.02) brightness(1) sepia(0);
   }
 }
 
 @layer utilities {
   .text-balance { text-wrap: balance; }
 
-  /* ─── Type Scale Utilities (11-level) ─── */
+  /* ─── Type Scale (11-level) ─── */
   .text-display-xl {
     font-size: clamp(64px, 8vw, 120px);
     line-height: 1.0;

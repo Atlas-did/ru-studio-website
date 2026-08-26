@@ -4,7 +4,9 @@ import { adminApi } from '@/lib/admin-api';
 interface CollectionItem {
   slug: string;
   title: string;
+  title_en?: string;
   subtitle: string;
+  subtitle_en?: string;
   category: string;
   cover_url: string;
   cover_alt: string;
@@ -13,15 +15,17 @@ interface CollectionItem {
   year: number;
   tags: string[];
   content: string;
-  video_url: string;
-  model_url: string;
+  content_en?: string;
+  gallery?: string[];
+  video_url?: string;
   sort_order: number;
 }
 
 const emptyItem: CollectionItem = {
-  slug: '', title: '', subtitle: '', category: '摄影',
+  slug: '', title: '', title_en: '', subtitle: '', subtitle_en: '', category: '摄影',
   cover_url: '', cover_alt: '', cover_width: 800, cover_height: 1067,
-  year: new Date().getFullYear(), tags: [], content: '', video_url: '', model_url: '', sort_order: 0,
+  year: new Date().getFullYear(), tags: [], content: '', content_en: '',
+  gallery: [], video_url: '', sort_order: 0,
 };
 
 const categories = ['影像', '摄影', '装置', '纪录'];
@@ -43,6 +47,11 @@ export default function AdminCollection() {
         ...item,
         tags: Array.isArray(item.tags) ? item.tags : [],
         content: item.content || '',
+        content_en: item.content_en || '',
+        gallery: Array.isArray(item.gallery) ? item.gallery : [],
+        video_url: item.video_url || '',
+        title_en: item.title_en || '',
+        subtitle_en: item.subtitle_en || '',
         cover_url: item.cover?.url || item.cover_url || '',
         cover_alt: item.cover?.alt || item.cover_alt || '',
       }))))
@@ -163,10 +172,6 @@ export default function AdminCollection() {
             className="font-sans text-[10px] tracking-[0.1em] text-mist border border-[rgba(168,164,154,0.3)] px-3 py-2 hover:bg-cinnabar hover:border-cinnabar transition-all uppercase whitespace-nowrap disabled:opacity-50">
             {uploading ? '...' : 'Upload'}
           </button>
-          <button onClick={() => setForm({ ...form, cover_url: 'https://images.unsplash.com/photo-1547981609-4b6bfe67ca0b?w=800&q=80' })}
-            className="font-sans text-[9px] text-text-secondary/40 hover:text-mist px-2 py-2 transition-colors">
-            填Unsplash
-          </button>
         </div>
         {form.cover_url && (
           <img src={form.cover_url} alt="preview" className="mt-2 w-32 h-auto object-cover border border-[rgba(168,164,154,0.15)]" />
@@ -187,23 +192,44 @@ export default function AdminCollection() {
           className="w-full bg-[rgba(168,164,154,0.06)] border border-[rgba(168,164,154,0.15)] px-3 py-2 font-serif text-sm text-mist focus:outline-none focus:border-cinnabar resize-y leading-relaxed"
           placeholder="输入作品详细介绍，换行即分段..." />
       </div>
-      <div>
+      <div className="md:col-span-2">
         <label className="block font-sans text-[10px] tracking-[0.1em] text-text-secondary uppercase mb-1">
-          视频链接（可选）
+          画廊多图（每行一个图片 URL）
         </label>
-        <input type="text" value={(form as any).video_url || ''}
+        <textarea
+          value={(form.gallery || []).join('\n')} rows={3}
+          onChange={(e) => setForm({ ...form, gallery: e.target.value.split('\n').map((s) => s.trim()).filter(Boolean) })}
+          className="w-full bg-[rgba(168,164,154,0.06)] border border-[rgba(168,164,154,0.15)] px-3 py-2 font-mono text-xs text-mist focus:outline-none focus:border-cinnabar resize-y"
+          placeholder={'/uploads/xxx1.jpg\n/uploads/xxx2.jpg'} />
+      </div>
+      <div className="md:col-span-2">
+        <label className="block font-sans text-[10px] tracking-[0.1em] text-text-secondary uppercase mb-1">视频 URL（可选）</label>
+        <input type="text" value={form.video_url || ''}
           onChange={(e) => setForm({ ...form, video_url: e.target.value })}
-          placeholder="粘贴视频 URL，如 https://res.cloudinary.com/..."
+          placeholder="/uploads/demo.mp4 或外链"
           className="w-full bg-[rgba(168,164,154,0.06)] border border-[rgba(168,164,154,0.15)] px-3 py-2 font-mono text-xs text-mist focus:outline-none focus:border-cinnabar" />
       </div>
+      <div className="md:col-span-2 pt-4 border-t border-[rgba(168,164,154,0.1)]">
+        <span className="block font-sans text-[10px] tracking-[0.15em] text-gold uppercase mb-3">English Content（双语站字段）</span>
+      </div>
       <div>
-        <label className="block font-sans text-[10px] tracking-[0.1em] text-text-secondary uppercase mb-1">
-          3D 模型链接（可选，.glb / .gltf）
-        </label>
-        <input type="text" value={(form as any).model_url || ''}
-          onChange={(e) => setForm({ ...form, model_url: e.target.value })}
-          placeholder="粘贴 3D 模型 URL，如 https://res.cloudinary.com/..."
-          className="w-full bg-[rgba(168,164,154,0.06)] border border-[rgba(168,164,154,0.15)] px-3 py-2 font-mono text-xs text-mist focus:outline-none focus:border-cinnabar" />
+        <label className="block font-sans text-[10px] tracking-[0.1em] text-text-secondary uppercase mb-1">Title EN</label>
+        <input type="text" value={form.title_en || ''}
+          onChange={(e) => setForm({ ...form, title_en: e.target.value })}
+          className="w-full bg-[rgba(168,164,154,0.06)] border border-[rgba(168,164,154,0.15)] px-3 py-2 font-sans text-sm text-mist focus:outline-none focus:border-cinnabar" />
+      </div>
+      <div>
+        <label className="block font-sans text-[10px] tracking-[0.1em] text-text-secondary uppercase mb-1">Subtitle EN</label>
+        <input type="text" value={form.subtitle_en || ''}
+          onChange={(e) => setForm({ ...form, subtitle_en: e.target.value })}
+          className="w-full bg-[rgba(168,164,154,0.06)] border border-[rgba(168,164,154,0.15)] px-3 py-2 font-sans text-sm text-mist focus:outline-none focus:border-cinnabar" />
+      </div>
+      <div className="md:col-span-2">
+        <label className="block font-sans text-[10px] tracking-[0.1em] text-text-secondary uppercase mb-1">Content EN</label>
+        <textarea value={form.content_en || ''} rows={5}
+          onChange={(e) => setForm({ ...form, content_en: e.target.value })}
+          className="w-full bg-[rgba(168,164,154,0.06)] border border-[rgba(168,164,154,0.15)] px-3 py-2 font-sans text-sm text-mist focus:outline-none focus:border-cinnabar resize-y leading-relaxed"
+          placeholder="English story (optional — falls back to Chinese)" />
       </div>
     </div>
   );

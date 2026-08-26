@@ -26,13 +26,12 @@ export default function DraggableGallery({
 }: DraggableGalleryProps) {
   const trackRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const hintRef = useRef<HTMLDivElement>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [startX, setStartX] = useState(0);
   const [scrollLeft, setScrollLeft] = useState(0);
   const [activeIndex, setActiveIndex] = useState(0);
-  const [cursorX, setCursorX] = useState<number | null>(null);
   const [showCursorHint, setShowCursorHint] = useState(true);
-  const [wheelLocked, setWheelLocked] = useState(false);
 
   // 计算当前激活项
   const updateActiveIndex = useCallback(() => {
@@ -50,7 +49,6 @@ export default function DraggableGallery({
     if (!container) return;
 
     const onWheel = (e: WheelEvent) => {
-      if (!wheelLocked) return;
       if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
         e.preventDefault();
         container.scrollLeft += e.deltaY;
@@ -60,7 +58,7 @@ export default function DraggableGallery({
 
     container.addEventListener('wheel', onWheel, { passive: false });
     return () => container.removeEventListener('wheel', onWheel);
-  }, [updateActiveIndex, wheelLocked]);
+  }, [updateActiveIndex]);
 
   // 鼠标拖拽
   const handleMouseDown = (e: React.MouseEvent) => {
@@ -70,10 +68,12 @@ export default function DraggableGallery({
   };
 
   const handleMouseMove = (e: React.MouseEvent) => {
-    // 自定义光标位置
-    const rect = containerRef.current?.getBoundingClientRect();
-    if (rect) {
-      setCursorX(e.clientX - rect.left);
+    // Custom drag-cursor position — direct DOM write, no React re-render
+    if (hintRef.current && !isDragging) {
+      const rect = containerRef.current?.getBoundingClientRect();
+      if (rect) {
+        hintRef.current.style.transform = `translate(${e.clientX - rect.left - 40}px, -50%)`;
+      }
     }
 
     if (!isDragging || !containerRef.current) return;
@@ -81,6 +81,17 @@ export default function DraggableGallery({
     const x = e.pageX - startX;
     containerRef.current.scrollLeft = scrollLeft - x;
     updateActiveIndex();
+  };
+
+  // Keyboard navigation (a11y)
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'ArrowRight') {
+      e.preventDefault();
+      goTo(Math.min(images.length - 1, activeIndex + 1));
+    } else if (e.key === 'ArrowLeft') {
+      e.preventDefault();
+      goTo(Math.max(0, activeIndex - 1));
+    }
   };
 
   const handleMouseUp = () => {
@@ -125,7 +136,7 @@ export default function DraggableGallery({
   const cursorLabel = isDragging ? '拖拽中' : '拖拽浏览';
 
   return (
-    <div className={`relative ${className}`} data-cursor="drag">
+    <div className={`relative group/gallery ${className}`} data-cursor="drag">
       {/* 主画廊区域 */}
       <div
         ref={containerRef}
@@ -135,10 +146,15 @@ export default function DraggableGallery({
           scrollbarWidth: 'none',
           msOverflowStyle: 'none',
         }}
+        tabIndex={0}
+        role="region"
+        aria-roledescription="画廊"
+        aria-label={`作品画廊，共 ${images.length} 张，可用左右方向键浏览`}
         onMouseDown={handleMouseDown}
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}
         onMouseLeave={handleMouseUp}
+        onKeyDown={handleKeyDown}
         onScroll={updateActiveIndex}
       >
         <div
@@ -159,6 +175,8 @@ export default function DraggableGallery({
                 <img
                   src={img.src}
                   alt={img.alt}
+                  loading="lazy"
+                  decoding="async"
                   className="w-full h-full object-cover"
                   draggable={false}
                 />
@@ -179,12 +197,12 @@ export default function DraggableGallery({
         </div>
       </div>
 
-      {/* 拖拽提示光标（仅在hover时显示） */}
-      {!isDragging && showCursorHint && cursorX !== null && (
+      {/* 拖拽提示光标（仅在hover时显示，位置由 mousemove 直操） */}
+      {!isDragging && showCursorHint && (
         <div
-          className="absolute top-1/2 -translate-y-1/2 pointer-events-none hidden md:block z-10"
+          ref={hintRef}
+          className="absolute top-1/2 left-0 -translate-y-1/2 pointer-events-none hidden md:block z-10 opacity-0 group-hover/gallery:opacity-100 transition-opacity duration-300"
           style={{
-            left: cursorX - 40,
             width: 80,
             height: 80,
             borderRadius: '50%',
@@ -204,8 +222,8 @@ export default function DraggableGallery({
 
       {/* 导航控制栏 */}
       <div className="flex items-center justify-between mt-6 px-1">
-        {/* 箭头按钮 + 锁定切换 */}
-        <div className="flex gap-3 items-center">
+        {/* 箭头按钮 */}
+        <div className="flex gap-3">
           <button
             onClick={goPrev}
             disabled={activeIndex === 0}
@@ -225,17 +243,6 @@ export default function DraggableGallery({
             <svg className="w-4 h-4 text-mist" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
             </svg>
-          </button>
-          <button
-            onClick={() => setWheelLocked(!wheelLocked)}
-            className={`text-caption-s font-sans px-2 py-1.5 border transition-all duration-300 ${
-              wheelLocked
-                ? 'text-cinnabar border-cinnabar/40 bg-cinnabar/10'
-                : 'text-stone/50 border-[rgba(245,242,235,0.08)] hover:text-stone hover:border-mist/20'
-            }`}
-            title={wheelLocked ? '已锁定：滚轮控制画廊' : '未锁定：滚轮控制页面'}
-          >
-            {wheelLocked ? '🔒 滚轮浏览' : '🔓 滚轮翻页'}
           </button>
         </div>
 
